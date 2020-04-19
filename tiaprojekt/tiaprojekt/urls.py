@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from . import views, kviz_api
+from .tiaprojekt import views, kviz_api
 
 urlpatterns = [
     path('admin/', admin.site.urls),
