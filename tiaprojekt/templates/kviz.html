@@ -1,0 +1,302 @@
+
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <title>MatQUIZ - Kvíz</title>
+    <style>
+       .topheader {
+          overflow: hidden;
+          background-color: #E5E5E5;
+          position: fixed;
+          top: 10px;
+          left: 20%;
+          width: 80%;
+          font-family: calibri;
+        }
+        .topheader p1{
+          float: center;
+          display: block;
+          background: #C4C4C4;
+          color: black;
+          text-align: center;
+          padding: 14px 16px;
+          text-decoration: none;
+          font-size: 25px;
+          font-family: calibri;
+        }
+        .topheader p2{
+          float: center;
+          display: block;
+          background: #E5E5E5;
+          color: black;
+          text-align: center;
+          padding: 14px 16px;
+          text-decoration: none;
+          font-size: 20px;
+          font-family: calibri;
+        }
+        .kviz_otazka{
+          overflow: auto;
+          position: fixed;
+          top: 130px;
+          left: 20%;
+          width: 80%;
+          height: 200pxs;
+          padding : 10px, 10px;
+          font-family: calibri;
+        }
+
+
+        /* Customize the label (the container) */
+.container {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 22px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Hide the browser's default radio button */
+.container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom radio button */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: #eee;
+  border-radius: 50%;
+}
+
+/* On mouse-over, add a grey background color */
+.container:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+/* When the radio button is checked, add a blue background */
+.container input:checked ~ .checkmark {
+  background-color: #FFBE58;
+}
+
+/* Create the indicator (the dot/circle - hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the indicator (dot/circle) when checked */
+.container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the indicator (dot/circle) */
+.container .checkmark:after {
+  top: 9px;
+  left: 9px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: white;
+}
+        .kviz_otazka a {
+          float: left;
+          display: block;
+          background: #FFBE58;
+          color: black;
+          text-align: center;
+          padding: 10px 10px;
+          text-decoration: none;
+          font-size: 15px;
+        }
+
+        .kviz_otazka a:hover {
+          background: #f1f1f1;
+          color: black;
+        }
+.actionbar {
+          overflow: hidden;
+          background-color: #E5E5E5;
+          position: fixed;
+          bottom: 0px;
+          width: 100%;
+        }
+
+        .actionbar .actionbutton {
+          float: right;
+          display: block;
+          background: #FFBE58;
+          color: black;
+          text-align: center;
+          padding: 14px 16px;
+          text-decoration: none;
+          font-size: 25px;
+        }
+
+        .actionbar .actionbutton:hover {
+          background: #f1f1f1;
+          color: black;
+        }
+
+        .actionbar .actionbutton.active {
+          background-color: #4CAF50;
+          color: white;
+        }
+    </style>
+
+</head>
+<body>
+
+{% include 'MenuBar.html' %}
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script type="text/javascript">
+
+var oznacene = {}; //dict kde si znacime dvojcu { otazka : vybranaodpoved_id }
+var len, keys, kviz, tmp, kviz_info, podnadpis_str;
+var otazky_id = {}; //dict kde si ukladame prvky {id_otazky : [id_odpovedi] }
+var timestamp_start = new Date();
+    var i = 0;
+    var j, len_od;
+
+$(document).ready(function(){
+
+    kviz_info = $.ajax({
+        type:"GET",
+        url: "/kviz_req3",
+        async: false,
+        dataType: 'json',
+        data:{
+                 kviz_id: {{kviz_id}}
+        },
+        success: function( data ){
+            //$('#test1').text(JSON.stringify(data))
+        }
+    }).responseJSON
+    podnadpis_str = (kviz_info['nazov']+'   '+kviz_info['predmet']+'    '+kviz_info['typ']);
+    $('#podnadpis').text(kviz_info['nazov']+'   '+kviz_info['predmet']+'    '+kviz_info['typ']);
+
+    kviz =  $.ajax({
+        type:"GET",
+        url: "/kviz_req1",
+        async: false,
+        dataType: 'json',
+        data:{
+                 kviz_id: {{kviz_id}}
+        },
+        success: function( data ){
+            //$('#test1').text(JSON.stringify(data))
+        }
+    }).responseJSON
+
+    otazky_id = kviz['id']; //vyberieme si zaznam 'id' kde mame ulozeny dict id otazok a id odpovedi
+    delete kviz['id'];      // zaznam 'id' zmazeme aby sme mohli pokracovat s dict 'kviz'
+    len = Object.keys(kviz).length;
+    keys = Object.keys(kviz);
+    vypis_otazku(i);
+});
+
+function ukonci_kviz(){
+
+    var timestamp_koniec = new Date();
+    var cas = {0: timestamp_start, 1: timestamp_koniec};
+    sessionStorage.clear();
+    sessionStorage.setItem("kviz_id", {{kviz_id}});
+    sessionStorage.setItem("kviz_info", podnadpis_str);
+    sessionStorage.setItem("ot_odp_id", JSON.stringify(otazky_id));
+    sessionStorage.setItem("oznacene", JSON.stringify(oznacene));
+    sessionStorage.setItem("cas", JSON.stringify(cas));
+    sessionStorage.setItem("kviz_text", JSON.stringify(kviz));
+
+    window.location.replace("vysledky"); //FUNGUJE!
+}
+
+function vypis_otazku(i){
+        //console.log(i);
+        if(i<len){
+            var ele_ot = document.getElementById('otazka');
+            var ele_odp = document.getElementById('formRB');
+            ele_odp.innerHTML = '';
+            len_od = kviz[keys[i]].length;
+            var answers = kviz[keys[i]];
+            ele_ot.innerHTML = ('<b>'+(i+1)+'/'+len+'</b>     '); //pocitadlo otazok
+            ele_ot.innerHTML += keys[i];          //znenie otazky
+
+            for(j=0; j<len_od; j++){
+                ele_odp.innerHTML += ('<label class="container">'+ answers[j] +'<input type="radio" name="radio" id="'+j+'" class="radio"><span class="checkmark"></span></label>'); //znenie odpovede
+            }
+
+        } else {
+            ukonci_kviz();
+        }
+}
+function uncheck(){
+    $('input:checked').removeAttr('checked');
+}
+function volba(i){
+
+    if (i != -1){
+        var key_otazka = Object.keys(otazky_id)[i]; //toto nam vrati idcko i-tej otazky v kvize (key v danom dict)
+        var odpovede_k_otazke_i_id =  otazky_id[key_otazka]; //toto nam vrati array idciek odpovedi pre danu otazku
+        var rb = document.querySelector('input[type=radio]:checked'); // FUNGUJE!
+
+        console.log("otazky_id full: "+JSON.stringify(otazky_id));
+        console.log("volba otazka poradie: "+i);
+        console.log("volba otazka db id: "+key_otazka);
+        console.log("volba odpovede db id "+odpovede_k_otazke_i_id);
+
+        if(rb === null) {
+            console.log('otazka_id: '+key_otazka+'  nic');
+            oznacene[key_otazka] = null;
+        } else {
+
+            oznacene[key_otazka] =  odpovede_k_otazke_i_id[rb.id];
+            console.log('oznacene: '+oznacene[key_otazka]);
+        }
+    }
+    // HINT : rb.value = on/off; rb.id = <0,poc_odpovedi-1>
+
+}
+
+
+</script>
+
+<div class="topheader">
+    <p1>KVIZ</p1>
+    <p2 id="podnadpis"></p2>
+</div>
+<p>uvitacie okno ku kvizu</p>  <!--TODO uvitacie okno ku kvizu, bude v inej class-->
+<div class="kviz_otazka">
+
+<!--    <p id="test1"></p>-->
+<!--   Zdroj  https://www.w3schools.com/howto/howto_css_custom_checkbox.asp -->
+    <p id="otazka"></p>
+    <form id="formRB" name ="otazka-opovede" action=""></form>
+<!--    <p id="odpovede_test"></p>-->
+</div>
+<div class="actionbar">
+    <a class="actionbutton" onclick="volba(i); ukonci_kviz()">Ukonci kviz</a>
+    <a class="actionbutton" onclick="volba(i); vypis_otazku(++i)">Dalsia otazka</a>
+    <a class="actionbutton" onclick="volba(i); vypis_otazku(--i)">Predosla otazka</a>
+    <a class="actionbutton" onclick="uncheck()">Odznacit</a>
+</div>
+
+
+
+</body>
+</html>

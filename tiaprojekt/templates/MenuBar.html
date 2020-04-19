@@ -1,0 +1,87 @@
+
+
+
+<html lang="sk">
+<head>
+<!--	<link rel="stylesheet" href="styles.css">-->
+	    <meta charset="UTF-8">
+	<style type="text/css">
+		.main{
+			margin-left:160px;
+            margin-bottom: 30px;
+		}
+		img {
+			width: 200px;
+			float: center;
+		}
+		.menubar {
+			position: fixed;
+			width: 17%;
+			height: 100%;
+			left: 0px;
+<!--			top: calc(50% - 1000px/2);-->
+			background: #FFFFFF;
+			z-index:1;
+			overflow-x: hidden;
+			font-family: calibri;
+<!--			padding-top:10px;-->
+		}
+
+		.menubar a {
+		  float: center;
+          display: block;
+          background: #E5E5E5;
+          color: black;
+          text-align: center;
+          padding: 14px 10px;
+          text-decoration: none;
+          font-size: 30px;
+          border: none;
+          widht: 100%;
+          line-height: 39px;
+			font-family: calibri;
+         }
+		.menubar a:hover{
+  			background-color: #C9E465;
+  			color: grey;
+		}
+		.menubar a.active {
+  			color: grey;
+		}
+		.menubar #hlavicka{
+			font-family: calibri;
+			font-style: normal;
+			font-weight: normal;
+			font-size: 40px;
+			line-height: 10px;
+			text-align: center;
+			background-color: clear;
+			color: #C4C4C4;
+			width: 100%;
+		}
+
+
+	</style>
+</head>
+
+<body>
+
+	<div class="menubar">
+		<img src="static/icon-version1.PNG" alt="LOGO" class="center">
+		<p id="hlavicka">MENU</p>
+
+		<a href="/nastenka">Nastenka</a>
+
+
+		<a href="/moje_kvizy">Moje Kvizy</a>
+
+
+		<a href="/historia_pokusov">Historia pokusov</a>
+
+
+		<a href="/oappke">O Appke</a>
+
+	</div>
+
+</body>
+</html>

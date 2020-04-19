@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MatQUIZ - Vysledky kvizu</title>
+
+        <style>
+       .topheader {
+          overflow: hidden;
+          background-color: #E5E5E5;
+          position: fixed;
+          top: 10px;
+          left: 20%;
+          width: 80%;
+       }
+       .topheader p1{
+          float: center;
+          display: block;
+          background: #C4C4C4;
+          color: black;
+          text-align: center;
+          padding: 14px 16px;
+          text-decoration: none;
+          font-size: 25px;
+          font-family: calibri;
+       }
+       .topheader p2{
+          float: center;
+          display: block;
+          background: #E5E5E5;
+          color: black;
+          text-align: center;
+          padding: 14px 16px;
+          text-decoration: none;
+          font-size: 20px;
+          font-family: calibri;
+       }
+       .vyhodnotenie{
+          overflow-y: scroll;
+          position: fixed;
+          top: 130px;
+          left: 20%;
+          width: 80%;
+          height: 200pxs;
+          padding : 10px, 10px;
+          font-family: calibri;
+       }
+
+       .actionbar {
+          overflow: hidden;
+          background-color: #E5E5E5;
+          position: fixed;
+          bottom: 0px;
+          width: 100%;
+       }
+
+       .actionbar .progress-bar {
+          float: left;
+          display: block;
+          text-align: center;
+          //padding: 14px 16px;
+          text-decoration: none;
+          font-size: 20px;
+          font-family: calibri;
+          height: 40px;
+       }
+
+
+    </style>
+
+</head>
+<body>
+
+{% include 'MenuBar.html' %}
+<!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>-->
+<script rel="stylesheet" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script type="text/javascript">
+
+var kv_id, kv_info, ot_odp_id, moje_odp, cas, text, pokus, pokus_id;
+
+$(document).ready(function(){
+    kv_id = sessionStorage.getItem("kviz_id"); //FUNGUJE, vrati int
+    kv_info = sessionStorage.getItem("kviz_info"); //FUNGUJE, vrati string
+
+    ot_odp_id = JSON.parse(sessionStorage.getItem("ot_odp_id")); //FUNGUJE, vrati dict {"ot_id":[odpoved_id, odpoved_id]}
+    moje_odp = JSON.parse(sessionStorage.getItem("oznacene")); //FUNGUJE, vrati dict podla idciek
+    cas = JSON.parse(sessionStorage.getItem("cas")); //FUNGUJE, vrati dict
+    text = JSON.parse(sessionStorage.getItem("kviz_text")); //FUNGUJE, vrati dict
+
+    document.getElementById("podnadpis").innerHTML = sessionStorage.getItem("kviz_info"); //generuj podnadpis
+
+    //console.log("zaciatok ot_odp_id: "+JSON.stringify(ot_odp_id));
+    //console.log("zaciatok moje odp: "+JSON.stringify(moje_odp));
+    //console.log("zaciatok cas: "+JSON.stringify(cas));
+    //console.log("zaciatok text: "+JSON.stringify(text));
+
+    prirad_pokus();
+    vypis_vysledky();
+
+});
+
+function prirad_pokus(){
+    pokus = $.ajax({
+        type:"GET",
+        url: "/kviz_req6",
+        async: false,
+        dataType: 'json',
+        data:{
+                 kviz_id: kv_id,
+                 zaciatok: cas[0],
+                 koniec: cas[1],
+        },
+        success: function( data ){
+            console.log('pokus.ajax(): '+JSON.stringify(data))
+        }
+    }).responseJSON
+    pokus_id = pokus['id'];
+}
+
+function over(otazka_id, odpoved_id, pokus_id){
+    console.log('over(): '+otazka_id+'.'+odpoved_id+'.'+ pokus_id)
+    vysledok = $.ajax({
+        type:"GET",
+        url: "/kviz_req7",
+        async: false,
+        dataType: 'json',
+        data:{
+                 otazka_id: otazka_id,
+                 moja_odpoved_id: odpoved_id,
+                 pokus_id: pokus_id,
+        },
+        success: function( data ){
+            console.log('pokus_id  '+JSON.stringify(data))
+        }
+    }).responseJSON
+
+    return vysledok;
+}
+
+function vypis_vysledky(){
+    var body = 0;
+    var statistika={'nezodpovedane':0, 'spravne':0, 'nespravne':0, 'spolu_otazok':0};
+
+    otazky_id = Object.keys(moje_odp); //vrati array idciek otazok z daneho kvizy (keys of dict)
+    poc_otazky = otazky_id.length; //pocet otazok v kvize
+
+    var ele = document.getElementById("vysl1");
+    for(i=0; i<poc_otazky; i++){
+
+        znenie_ot = '<b>'+(i+1)+'/'+poc_otazky+'</b>   '+Object.keys(text)[i]+'<br>'; //znenie otazky aj s pocitadlom
+        otazka_id = otazky_id[i]; //vrati idcko i-tej otazky
+        moja_odpoved_id = moje_odp[otazka_id]; //vrati idcko mojej odpovede na otazku (moje_odp[key of otazka])
+
+        if(moja_odpoved_id == null){
+            znenie_odp = '<p style="color:blue;">Otazka nezodpovedana</p><br>';
+            statistika['nezodpovedane']++;
+            statistika['spolu_otazok']++;
+            body += 0;
+        } else {
+            var vysledok = over(otazka_id, moja_odpoved_id, pokus_id);
+            if(vysledok['odpoved'] == true){
+                znenie_odp = '<p style="color:green;">'+vysledok['znenie']+'<br>SPRAVNA ODPOVED :)</p><br>'; //TODO zmen odpoved_text param
+                statistika['spravne']++;
+                statistika['spolu_otazok']++;
+            } else {
+                znenie_odp = '<p style="color:red;">'+vysledok['znenie']+'<br>NESPRAVNA ODPOVED :(</p><br>'; //TODO zmen odpoved_text param
+                statistika['nespravne']++;
+                statistika['spolu_otazok']++;
+            }
+            body += vysledok['body'];
+        }
+        ele.innerHTML += (znenie_ot+znenie_odp);
+        body += vysledok['body'];
+    }
+    console.log(JSON.stringify(statistika));
+    console.log(body);
+
+    dopln_pokus = $.ajax({
+        type:"GET",
+        url: "/kviz_req2",
+        async: false,
+        dataType: 'json',
+        data:{
+                 pokus_id: pokus_id,
+                 uhadol: statistika['spravne'],
+                 neuhadol: statistika['nespravne'],
+                 neodpovedal: statistika['nezodpovedane'],
+                 body: body,
+        },
+        success: function( data ){
+            console.log(JSON.stringify(data))
+        }
+    }).responseJSON
+
+//VYKRESLI VYSLEDKY
+    var spravne = statistika['spravne']*10;
+    var nespravne = spravne+(statistika['nespravne']*10);
+    var nezodpovedane = nespravne+(statistika['nezodpovedane']*10);
+    var ele1 = document.getElementById("actionbar1");
+
+    ele1.innerHTML += ('<p class="progress-bar" style="width:'+statistika['spravne']*10+'%; background-color: green;color:white">Spravne</p>');
+    ele1.innerHTML += ('<p class="progress-bar" style="width:'+statistika['nespravne']*10+'%; background-color: red;color:white">Nespravne</p>');
+    ele1.innerHTML += ('<p class="progress-bar" style="width:'+statistika['nezodpovedane']*10+'%; background-color: blue;color:white">Nezodpovedane</p>');
+    ele1.innerHTML += ('<p class="progress-bar" style="width: 20%;background-color: #FFBE58;color:white">Pocet ziskanych bodov: '+body+'</p>');
+}
+
+</script>
+
+
+<div class="topheader">
+    <p1>VYSLEDKY KVIZU</p1>
+    <p2 id="podnadpis"></p2>
+</div>
+<div class="vyhodnotenie" id="vysl1"></div>
+
+<div class="actionbar" id="actionbar1"></div>
+
+
+</body>
+</html>
