@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'tiaprojekt.apps.KvizConfig',
+    'tiaprojekt.tiaprojekt.apps.KvizConfig',
 ]
 
 MIDDLEWARE = [
@@ -71,7 +71,7 @@ TEMPLATES = [
 STATICFILES_DIRS = [
     # os.path.join(BASE_DIR,"tiaprojekt", "static"),
 ]
-WSGI_APPLICATION = 'tiaprojekt.wsgi.application'
+WSGI_APPLICATION = 'tiaprojekt.tiaprojekt.wsgi.application'
 
 
 # Database
