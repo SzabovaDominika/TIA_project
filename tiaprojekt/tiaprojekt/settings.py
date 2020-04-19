@@ -71,7 +71,7 @@ TEMPLATES = [
 STATICFILES_DIRS = [
     # os.path.join(BASE_DIR,"tiaprojekt", "static"),
 ]
-WSGI_APPLICATION = 'tiaprojekt.tiaprojekt.wsgi.application'
+WSGI_APPLICATION = 'tiaprojekt.wsgi.application'
 
 
 # Database
