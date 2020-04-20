@@ -10,7 +10,7 @@ def index(request):
     #return HttpResponse("<b>Hello</b>, world. You're at the polls index.")
 
     #return render(request, 'kviz.html')
-    return render(request, 'ActionBar.html')
+    return render(request, 'MenuBar.html')
 
 def kviz(request):
     idcko = request.GET['kviz_id']
