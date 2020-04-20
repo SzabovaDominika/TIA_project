@@ -31,4 +31,5 @@ urlpatterns = [
     path('kviz_req5', kviz_api.delete_kviz),
     path('kviz_req6', kviz_api.assign_pokus),
     path('kviz_req7', kviz_api.check_odpoved),
+    path('vytvor_kvizy', views.vytvor_kvizy),
 ]

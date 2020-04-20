@@ -8,8 +8,20 @@ from .models import *
 # Elements properties https://javascript.info/size-and-scroll (padding, border, ...)
 
 def index(request):
-
     # return HttpResponse("<b>Hello</b>, world. You're at the polls index.")
+    return render(request, 'MenuBar.html')
+
+def kviz(request):
+    idcko = request.GET['kviz_id']
+    return render(request, 'kviz.html', {'kviz_id' : idcko})
+
+def moje_kvizy(request):
+    return render(request, 'moje_kvizy.html')
+
+def vysledky(request):
+    return render(request, 'kviz_vysledky.html')
+
+def vytvor_kvizy(request):
 
     kv1 = Kviz_def()
     kv1.kviz_nazov = "testovaci kviz 1"
@@ -56,18 +68,5 @@ def index(request):
     odp31.save()
     odp32 = Odpoved_def(otazka_id=ot3, odpoved_znenie="cokolada", odpoved_body=0, odpoved_spravna=False)
     odp32.save()
+    return HttpResponse("Vytvorené defaultné kvízy")
 
-
-
-    #return render(request, 'kviz.html')
-    return render(request, 'MenuBar.html')
-
-def kviz(request):
-    idcko = request.GET['kviz_id']
-    return render(request, 'kviz.html', {'kviz_id' : idcko})
-
-def moje_kvizy(request):
-    return render(request, 'moje_kvizy.html')
-
-def vysledky(request):
-    return render(request, 'kviz_vysledky.html')
