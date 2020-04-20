@@ -1,1 +1,1 @@
-web: gunicorn tiaprojekt.tiaprojekt.wsgi --log-file -
+web: gunicorn tiaprojekt.wsgi --log-file -
