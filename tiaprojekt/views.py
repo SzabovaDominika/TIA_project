@@ -22,13 +22,14 @@ def vysledky(request):
     return render(request, 'kviz_vysledky.html')
 
 def vytvor_kvizy(request):
+    if Kviz_def.objects.all():
+        return HttpResponse("Už existujú kvízy")
 
     kv1 = Kviz_def()
     kv1.kviz_nazov = "testovaci kviz 1"
     kv1.kviz_typ = "Skuska"
     kv1.kviz_predmet = "Predmet 1"
     kv1.save()
-    kv = Kviz_def.objects.get(id=1)
 
     kv2 = Kviz_def()
     kv2.kviz_nazov = "Testovaci kviz 2"
@@ -43,11 +44,11 @@ def vytvor_kvizy(request):
     kv3.save()
 
 
-    ot1 = Otazka_def(kviz_id=kv, otazka_znenie = "Kolko percent obzvatelstva sveta su lavaci?")
+    ot1 = Otazka_def(kviz_id=kv1, otazka_znenie = "Kolko percent obzvatelstva sveta su lavaci?")
     ot1.save()
-    ot2 = Otazka_def(kviz_id=kv, otazka_znenie="Oko pstrosa je vacsie ako jeho mozog.")
+    ot2 = Otazka_def(kviz_id=kv1, otazka_znenie="Oko pstrosa je vacsie ako jeho mozog.")
     ot2.save()
-    ot3 = Otazka_def(kviz_id=kv, otazka_znenie="Aka pricut zmrzliny je najoblubenejsia v USA?")
+    ot3 = Otazka_def(kviz_id=kv1, otazka_znenie="Aka pricut zmrzliny je najoblubenejsia v USA?")
     ot3.save()
 
     odp11 = Odpoved_def(otazka_id=ot1, odpoved_znenie = "viac nez 20%", odpoved_body=0, odpoved_spravna=False)

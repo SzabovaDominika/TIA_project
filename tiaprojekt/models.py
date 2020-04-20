@@ -21,14 +21,14 @@ class Kviz_def(models.Model):
     kviz_vytvoreny = models.DateField(auto_now=True)
 
 class Otazka_def(models.Model):
-    kviz_id = models.ForeignKey(Kviz_def, on_delete=models.CASCADE)
+    kviz_id = models.ForeignKey(Kviz_def, on_delete=models.DO_NOTHING)
     otazka_znenie = models.TextField(null=False, blank=False, default="-")
 
     def __str__(self):
         return self.otazka_znenie
 
 class Odpoved_def(models.Model):
-    otazka_id = models.ForeignKey(Otazka_def, on_delete=models.CASCADE)
+    otazka_id = models.ForeignKey(Otazka_def, on_delete=models.DO_NOTHING)
     odpoved_znenie = models.TextField(null=True, blank=True)
     odpoved_body = models.IntegerField()
     odpoved_spravna = models.BooleanField(default=False)
@@ -49,7 +49,7 @@ class Pokus(models.Model):
     def duration(self):
         return self.pokus_koniec-self.pokus_zaciatok
 class Odpoved(models.Model):
-    pokus_id = models.ForeignKey(Pokus, on_delete=models.CASCADE, default=0)
+    pokus_id = models.ForeignKey(Pokus, on_delete=models.DO_NOTHING, default=0)
     otazka_id = models.ForeignKey(Otazka_def, on_delete=models.DO_NOTHING)
     odpoved_moja = models.ForeignKey(Odpoved_def, on_delete=models.DO_NOTHING)
 
