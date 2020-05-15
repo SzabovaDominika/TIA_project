@@ -2,45 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-	<style type="text/css">
-		.actionbar {
-          overflow: hidden;
-          background-color: #E5E5E5;
-          position: fixed;
-          bottom: 0px;
-          width: 100%;
-        }
-
-        .actionbar a {
-          float: right;
-          display: block;
-          background: #FFBE58;
-          color: black;
-          text-align: center;
-          padding: 14px 16px;
-          text-decoration: none;
-          font-size: 25px;
-        }
-
-        .actionbar a:hover {
-          background: #f1f1f1;
-          color: black;
-        }
-
-        .actionbar a.active {
-          background-color: #4CAF50;
-          color: white;
-        }
-	</style>
+	<link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet'>
 	<title>MatQUIZ</title>
 </head>
 
 <body>
 
 	<div class="actionbar">
-		<a href="/3">zrus</a>
-		<a href="/2">vymaz</a>
-		<a href="/1">uloz</a>
+		    <style scoped>
+        {% include 'styles/ActionBar_style.css' %}
+    </style>
+		<a href="/3">zruš</a>
+		<a href="/2">vymaž</a>
+		<a href="/1">ulož</a>
 		<a href="/0">edituj</a>
 	</div>
 </body>

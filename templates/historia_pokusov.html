@@ -2,9 +2,9 @@
 <html lang="sk">
 <head>
     <meta charset="UTF-8">
-    <title>MatQUIZ - Moje kvízy</title>
+    <title>História pokusov</title>
     <link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet'>
-    <style>
+        <style>
 
          .listkvizov{
           overflow: auto;
@@ -66,7 +66,6 @@
   width: 25px;
   background-color: #eee;
   border-radius: 50%;
-
 }
 
 /* On mouse-over, add a grey background color */
@@ -99,9 +98,7 @@
   height: 8px;
   border-radius: 50%;
   background: white;
-
 }
-
 
     </style>
 
@@ -116,11 +113,6 @@ var kvizy;
 $(document).ready(function(){
     nacitaj();
 });
-
-function noChecked(){
-    alert("Nezvolil si žiaden kvíz");
-}
-
 
 function vypis(){
     var i, kluc;
@@ -137,7 +129,7 @@ function vypis(){
 function nacitaj(){
     kvizy = $.ajax({
         type:"GET",
-        url: "/kviz_req4",
+        url: "/history",
         async: false,
         dataType: 'json',
         data:{},
@@ -151,47 +143,61 @@ function nacitaj(){
 
 function uncheck(){
     $('input:checked').removeAttr('checked');
-    $(':a').prop('disabled', true); //TODO skontrolovat spravnost, nastavit farbu
+    $(':a').prop('disabled', true); //TODO skontrolovat spravnost, error: unsupported 'a'
+}
+
+function noChecked(){
+    alert("Nezvolil si žiaden pokus");
 }
 
 function vymaz(){
     var tmp = document.querySelector('input[type=radio]:checked'); // FUNGUJE!
     if (tmp == null) noChecked();
 
-    $.ajax({
+    console.log(tmp)
+    var boolean = $.ajax({
         type:"GET",
-        url: "/kviz_req5",
+        url: "/history_req1",
         async: false,
+        dataType: 'bool',
         data:{
-            'kviz_id' : tmp.id
+            'pokus_id' : tmp.id
             },
+        success: function( data ){
+<!--            console.log(data)-->
+        }
     });
     location.reload();
 }
 
-function edit(){
-    var tmp = document.querySelector('input[type=radio]:checked'); // FUNGUJE!
-    if (tmp == null) noChecked();
 
-    window.location.replace("/edituj_kviz?kviz_id="+tmp.id);
-}
+<!-- TODO -->
+<!--function show(){-->
+<!--&lt;!&ndash;    zvol si pokus &ndash;&gt;-->
+<!--    var tmp = document.querySelector('input[type=radio]:checked'); // FUNGUJE!-->
+<!--    var bunch = $.ajax({-->
+<!--        type: "GET",-->
+<!--        url: "TODO",-->
+<!--        dataType: 'json',-->
+<!--        data:{-->
+<!--            # TODO sem daj data-->
+<!--        }-->
 
-function hraj(){
-    var tmp = document.querySelector('input[type=radio]:checked'); // FUNGUJE!
-    if (tmp == null) noChecked();
+<!--    });-->
 
-    window.location.replace("/kviz?kviz_id="+tmp.id);
-}
+<!--    window.location.replace("vysledky"); //FUNGUJE!-->
+<!--}-->
+
 
 </script>
 
 
 {% include 'MenuBar.html' %}
 <div class="topheader">
-        <style scoped>
+    <style scoped>
         {% include 'styles/TopHeader_style.css' %}
     </style>
-    <p1>MOJE KVÍZY</p1>
+    <p1>HISTÓRIA POKUSOV</p1>
 </div>
 
 <div class="listkvizov">
@@ -199,18 +205,15 @@ function hraj(){
     <form id="formRB1" name ="nazov_kvizu" action=""></form>
 </div>
 
+
 <div class="actionbar">
     <style scoped>
         {% include 'styles/ActionBar_style.css' %}
     </style>
-
-    <a class="actionbutton" onclick="hraj()">Spustiť kvíz</a>
-    <a class="actionbutton" onclick="edit()">Editovať</a>
-    <a class="actionbutton" onclick="vymaz()">Odstraniť kvíz</a>
-    <a class="actionbutton" onclick="" href="\vytvor_kviz">Vytvoriť nový kvíz</a>
+    <a class="actionbutton" onclick="vymaz()">Odstrániť pokus</a>
+    <a class="actionbutton" onclick="show()">Ukáž</a>
     <a class="actionbutton" onclick="uncheck()">Odznačiť</a>
 </div>
-
 
 </body>
 </html>

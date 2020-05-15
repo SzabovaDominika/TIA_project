@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MatQUIZ - Editácia kvízu</title>
+    	<link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet'>
+    <style type="text/css">
+
+
+
+<!--https://www.w3schools.com/css/tryit.asp?filename=trycss_forms-->
+<!-- FIXME -->
+
+<!--        .Kviz_info .box {-->
+<!--          width: 100%;-->
+<!--          padding: 12px 20px;-->
+<!--          margin: 8px 0;-->
+<!--          display: inline-block;-->
+<!--          border: 1px solid #ccc;-->
+<!--          border-radius: 4px;-->
+<!--          box-sizing: border-box;-->
+<!--          font-family: Raleway;-->
+<!--          font-size: 30pt;-->
+<!--        }-->
+        .Kviz_info {
+          overflow-y: scroll;
+          position: fixed;
+          top: 130px;
+          left: 20%;
+          width: 80%;
+          height: 540px;
+          padding : 10px, 10px;
+          font-family: Raleway;
+          font-size: 15pt;
+        }
+
+        /* Customize the label (the container) */
+.container {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 15pt;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  font-family: Raleway;
+}
+
+/* Hide the browser's default radio button */
+.container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom radio button */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: #eee;
+  border-radius: 50%;
+}
+
+/* On mouse-over, add a grey background color */
+.container:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+/* When the radio button is checked, add a blue background */
+.container input:checked ~ .checkmark {
+  background-color: #FFBE58;
+}
+
+/* Create the indicator (the dot/circle - hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the indicator (dot/circle) when checked */
+.container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the indicator (dot/circle) */
+.container .checkmark:after {
+  top: 9px;
+  left: 9px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: white;
+}
+
+
+    </style>
+
+
+</head>
+<body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script rel="stylesheet" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script type="text/javascript" src="http://latex.codecogs.com/latexit.js"></script>
+<script src="//i.upmath.me/latex.js"></script>
+<script type="text/javascript">
+
+var kviz_info;
+var len_otazky, kviz, tmp, kviz_info, podnadpis_str;
+
+$(document).ready(function(){
+    kviz_info = $.ajax({
+        type:"GET",
+        url: "/kviz_req3",
+        async: false,
+        dataType: 'json',
+        data:{
+                 kviz_id: {{kviz_id}},
+        },
+    }).responseJSON
+    podnadpis_str = (kviz_info['nazov']+'   '+kviz_info['predmet']+'    '+kviz_info['typ']);
+    console.log(podnadpis_str)
+    $('#podnadpis').text(kviz_info['nazov']+'   '+kviz_info['predmet']+'    '+kviz_info['typ']);
+
+    kviz =  $.ajax({
+        type:"GET",
+        url: "/kviz_req1",
+        async: false,
+        dataType: 'json',
+        data:{
+                 kviz_id: {{kviz_id}}
+        },
+    }).responseJSON
+
+    len_otazky = Object.keys(kviz).length -1; //pocet otazok
+    vypis_udaje();
+    vypis_kviz();
+})
+
+function vypis_udaje(){
+
+    var ele_kvinf = document.getElementById('Kviz_info');
+
+<!-- SEKCIA VYPISANIA HLAVNYCH UDAJOV KVIZU -->
+    $('#Kviz_info').html('<form name="NewQ" method="post">'+
+      'Zmeň názov kvízu: <input type="text" id="q_title" name="q_title"'+
+                                'placeholder="'+  kviz_info['nazov']  +'" maxlength="50" size = 96'+
+                                'style="height:30px;font-size: 15pt; font-family: Raleway;"><br><br>'+
+      'Zmeň predmet: <input type="text" id="q_lecture" name="q_lecture"'+
+                            'placeholder="'+  kviz_info['predmet']  +'" maxlength="100" size = 100'+
+                            'style="height:30px;font-size: 15pt;font-family: Raleway;"><br><br>'+
+        'Vyber typ kvízu:<select id="q_type" name="q_type" style="height:20px;font-size: 10pt;font-family: Raleway;">'+
+                    '<option value="neznáme" selected="selected" id="default">'+   kviz_info['typ']  +'</option>'+
+                    '<option value="Rozcvička">Rozcvička</option>'+
+                    '<option value="Cviková písomka malá">Cviková písomka</option>'+
+                    '<option value="Cviková písomka veľká">Cviková písomka veľká</option>'+
+                    '<option value="Laboratórny test">Laboratórny test</option>'+
+                    '<option value="Zápočet">Zápočet</option>'+
+                    '<option value="Semestrálna písomka">Semestrálna písomka</option>'+
+                    '<option value="Skúška">Skúška</option>'+
+                    '<option value="Skúška ústna">Skúška ústna</option>'+
+                    '<option value="Skúška písomná">Skúška písomná</option>'+
+                    '<option value="Štátnice">Štátnice</option>'+
+                    '<option value="Vlastné precvičenie">Vlastné precvičenie</option>'+
+                '</select></form><br></div> ')
+
+}
+
+
+function vypis_kviz(){
+<!-- SEKCIA VYPISANIA OTAZOK -->
+
+    console.log(kviz)
+
+    for(i=0; i<len_otazky; i++){
+            var ele_ot = document.getElementById('Kviz_info');
+
+            len_odpovede = Object.keys(kviz[i]).length //pocet odpovedi k otazke v poradi 'i'
+
+
+            //znenie otazky
+            ele_ot.innerHTML += ('<label class="container"><b>'+(i+1)+'/'+len_otazky+' </b>'+ kviz[i][0][1] +'<input type="radio" name="radio" id="'+kviz[i][0][0]+'" class="radio"><span class="checkmark"></span></label>');
+
+            for(j=0; j<len_odpovede-1; j++){
+                ele_ot.innerHTML += ('<p><b>'+(j+1)+'/'+(len_odpovede-1)+'    </b>'+kviz[i][j+1][1]+'</p>'); //znenie odpovede
+            }
+            ele_ot.innerHTML += ('<br>');
+    }
+
+
+}
+
+function remove(){
+    var tmp = document.querySelector('input[type=radio]:checked'); // FUNGUJE!
+    if (tmp == null) noChecked();
+
+    $.ajax({
+        type:"GET",
+        url: "/kviz_req12",
+        async: false,
+        data:{
+            'otazka_id' : tmp.id
+            },
+    });
+    location.reload();
+}
+
+function validateForm() {
+
+    var title = document.forms["NewQ"]["q_title"].value;
+    var lecture = document.forms["NewQ"]["q_lecture"].value;
+    var type = document.forms["NewQ"]["q_type"].value;
+
+    if (!title.match(/\S/))  title = "";
+    if (!lecture.match(/\S/))  lecture = "";
+    if (!type.match(kviz_info['typ']))  type = "";
+
+    var newQ = $.ajax({
+        type:"GET",
+        url: "/kviz_req11",
+        async: false,
+        data: {
+            'kviz_id':{{kviz_id}},
+            'title' : title,
+            'lecture':lecture,
+            'type':type,
+            },
+    })
+
+}
+
+
+function submit_newQs(){
+    validateForm();
+    window.location.replace("/pridaj_otazku?kviz_id="+{{kviz_id}});
+}
+function submit_return(){
+    validateForm();
+    window.location.replace("/moje_kvizy");
+}
+
+function uncheck(){
+    $('input:checked').removeAttr('checked');
+}
+
+</script>
+{% include 'MenuBar.html' %}
+<div class="topheader">
+    <style scoped>
+        {% include 'styles/TopHeader_style.css' %}
+    </style>
+    <p1>EDITUJ KVÍZ</p1>
+    <p2 id="podnadpis"></p2>
+</div>
+
+<div class="Kviz_info" id="Kviz_info">
+
+</div>
+
+
+
+<div class="actionbar">
+        <style scoped>
+        {% include 'styles/ActionBar_style.css' %}
+    </style>
+    <a class="actionbutton" onclick="" href="\moje_kvizy">Zruš</a>
+    <a class="actionbutton" onclick="uncheck()">Odznačiť</a>
+    <a class="actionbutton" onclick="remove()">Vymaž otázku</a>
+    <a class="actionbutton" onclick="submit_newQs()">Potvrď zmeny a pridaj otázku</a>
+    <a class="actionbutton" onclick="submit_return()">Potvrď zmeny  a choď späť na Moje kvízy</a>
+</div>
+
+
+
+</body>
+</html>

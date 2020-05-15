@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MatQIUZ - Pridanie otázky</title>
+	<link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet'>
+	<style type="text/css">
+
+<!--https://www.w3schools.com/css/tryit.asp?filename=trycss_forms-->
+<!-- FIXME -->
+<!--        .NewQ_form .box {-->
+<!--          width: 100%;-->
+<!--          padding: 12px 20px;-->
+<!--          margin: 8px 0;-->
+<!--          display: inline-block;-->
+<!--          border: 1px solid #ccc;-->
+<!--          border-radius: 4px;-->
+<!--          box-sizing: border-box;-->
+<!--          font-family: Raleway;-->
+<!--          font-size: 20pt;-->
+<!--        }-->
+
+        .NewQ_form .additional_text{
+            font-size: 15pt;
+        }
+        .NewQ_form {
+          overflow-y: scroll;
+          position: fixed;
+          top: 130px;
+          left: 20%;
+          width: 80%;
+          height: 73%;
+          padding : 10px, 10px;
+          font-family: Raleway;
+          font-size: 15pt;
+        }
+
+	</style>
+
+
+</head>
+<body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script rel="stylesheet" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script type="text/javascript" src="http://latex.codecogs.com/latexit.js"></script>
+<script src="//i.upmath.me/latex.js"></script>
+<script type="text/javascript">
+
+var kviz_info;
+var answ;
+
+$(document).ready(function(){
+    kviz_info = $.ajax({
+        type:"GET",
+        url: "/kviz_req3",
+        async: false,
+        dataType: 'json',
+        data:{
+                 kviz_id: {{kviz_id}},
+        },
+    }).responseJSON
+    podnadpis_str = (kviz_info['nazov']+'   '+kviz_info['predmet']+'    '+kviz_info['typ']);
+    console.log(podnadpis_str)
+    $('#podnadpis').text(kviz_info['nazov']+'   '+kviz_info['predmet']+'    '+kviz_info['typ']);
+
+})
+
+function validateForm() {
+  var title = document.forms["NewQ"]["q_title"].value;
+  if (title == "") title = "NA";
+<!-- SEKCIA PRE OTAZKU-->
+  var ot = $.ajax({
+        type:"GET",
+        url: "/kviz_req9",
+        async: false,
+        dataType: 'json',
+        data:{
+              kviz_id : {{kviz_id}},
+              otazka_znenie : title
+        },
+  }).responseJSON
+  var ot_id = ot['id'];
+
+<!-- SEKCIA PRE ODPOVED-->
+  var text, body, spravna;
+  var id, text_id, body_id;
+  for (i=0; i<answ; i++){
+    id = i+1;
+    text_id = "q_answer"+id;
+    body_id = "q_answer"+id+"points";
+    text = document.forms["NewQ"][text_id].value;
+    body = document.forms["NewQ"][body_id].value;
+    if ($("#"+id).is(":checked"))  spravna = 1;
+
+
+  $.ajax({
+        type:"GET",
+        url: "/kviz_req10",
+        async: false,
+        dataType: 'json',
+        data:{
+            otazka_id : ot_id,
+            znenie : text,
+            body : body,
+            spravna : spravna,
+        },
+  })
+    }
+}
+
+function submit_return(){
+    validateForm();
+    window.location.replace("/moje_kvizy");
+}
+
+function submit_next(){
+
+    validateForm();
+    window.location.replace("/pridaj_otazku?kviz_id="+{{kviz_id}});
+}
+
+function render_answer_boxes(){
+    var id;
+    answ = document.getElementById('q_numansw').value;
+    var elem = document.getElementById('form');
+    elem.innerHTML += ('Zadaj znenie odpovede, body a zvoľ správnu odpoveď:<br><br>')
+    for (i=0; i<answ; i++){
+        id = i+1;
+        elem.innerHTML += (id+' <textarea class="box" type="text" id="q_answer'+id+'" name="q_answer'+id+'"placeholder="Odpoveď" size = 100 style="height:30px;font-size: 15pt;font-family: Raleway;"></textarea>');
+        elem.innerHTML += ('    <input class="box" type="number" id="q_answer'+id+'points" name="q_answer'+id+'points" placeholder="Body" maxlength="4" size ="4" style="height:30px;font-size: 15pt;font-family: Raleway;">');
+        elem.innerHTML += ('    <input class="formRB" type="radio" id="'+id+'" name="+id+"><br><br>');
+    }
+
+
+}
+
+function clear_all(){
+<!--https://www.w3schools.com/howto/howto_html_clear_input.asp-->
+
+    document.getElementById('q_title').value = '';
+    document.getElementById('q_numansw').value='';
+    location.reload();
+}
+
+</script>
+
+{% include 'MenuBar.html' %}
+<div class="topheader">
+    <style scoped>
+        {% include 'styles/TopHeader_style.css' %}
+    </style>
+    <p1>PRIDAJ OTÁZKU DO KVÍZU</p1>
+    <p2 id="podnadpis"></p2>
+</div>
+
+<!--https://www.w3schools.com/js/js_validation.asp-->
+<div class="NewQ_form">
+    <form name="NewQ" method="post" id="form">
+        Zadaj znenie otázky: <textarea type="text" id="q_title" name="q_title"
+                             placeholder="Otázka" rows="4" cols="100"
+                                       style="height:30px;font-size: 15pt;font-family: Raleway;"></textarea><br>
+        Vyber počet odpovedí: <input class="box" type="number" id="q_numansw" name="q_answer1points"
+               placeholder="#" maxlength="4" size ="4"
+                style="height:30px;font-size: 15pt;font-family: Raleway;">
+        <button type="button" class="" onclick="render_answer_boxes()"
+            style="height:30px;font-size: 15pt;font-family: Raleway;">Zvoľ</button>
+        <br><br>
+
+    </form>
+    <p  style="font-size: 10pt;font-family: Raleway;">
+        HINT (medzi znakmi $ zmaž medzeru):<br>
+        $ $sin (x) : T_n(x) = \sum^{n}_{k=0} (-1)^k \frac{x^{2k+1}}{(2k+1)!}$ $<br>
+        $$\sin (x) : T_n(x) = \sum^{n}_{k=0} (-1)^k \frac{x^{2k+1}}{(2k+1)!}$$
+    </p>
+
+
+
+</div>
+
+
+<div class="actionbar">
+        <style scoped>
+        {% include 'styles/ActionBar_style.css' %}
+    </style>
+    <a class="actionbutton" onclick="" href="\moje_kvizy">Zruš</a>
+    <a class="actionbutton" onclick="clear_all()">Vyčisti celé</a>
+    <a class="actionbutton" onclick="submit_next()">Potvrď a pridaj otázku</a>
+    <a class="actionbutton" onclick="submit_return()">Potvrď a choď späť na Moje kvízy</a>
+</div>
+
+
+</body>
+</html>

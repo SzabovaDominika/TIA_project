@@ -1,0 +1,67 @@
+<h2>Motivácia</h2>
+
+<p>Účelom aplikácie je vytváranie vlastných kvízov, ktoré majú slúžiť ako
+samo-preskúšací prostriedok pre študentov pred zápočtom, skúškou alebo iným
+typom overovania znalostí. Počet kvízov, ktoré si používateľ vytvorí, nie je
+obmedzený, rovnako ani počet otázok a jej odpovedí v kvíze. Každé prejdenie kvízu je obodované
+zaznamenané v databáze. Každá otázka kvízu ma na výber rôzny počet odpovedí, pričom
+práve jedna odpoveď je správna.</p>
+
+<h2>Ako vytvoriť nový kvíz?</h2>
+<p>V sekcii <a href="\moje_kvizy">Moje kvízy</a> na horizontálnom paneli
+na spodu obrazovky uvidíš tlačidlo <a href="\vytvor_kviz">Vytvoriť nový kvíz</a>.
+To ťa premiestni do formulára, v ktorom si vieš vyplniť základné údaje o
+tvojom novom kvíze - názov kvízu, predmet a vybrať si zo širokej ponuky
+typov kvízu. Na spodnom horizontálnom paneli si môžeš všimnúť rôzne akcie,
+ktoré možno spraviť s novovytvoreným kvízom. Bližšie informácie o spôsobe
+vytvárania nového kvízu nájdeš priamo vo formulári.</p>
+
+<h2>Ako pridať novú otázku do kvízu?</h2>
+
+<p>Lorem ipsum</p>
+
+<h2>Ako viem zapísať matematický výraz?</h2>
+<p>     Pre prehľadnú vizualizáciu matematických výrazov použi konvenciu LaTeXu. Stačí ak
+        matematickú funkciu ohraničíš dvojtým znakom <b>$$</b> na začiatku a na konci výrazu.
+        Všetok text, ktorý vpíšeš medzi tieto znaky, sa preloží a takto pekne vizualizuje: <br>
+        $ $\sin (x) : T_n(x) = \sum^{n}_{k=0} (-1)^k \frac{x^{2k+1}}{(2k+1)!}$ $<br>
+        $$\sin (x) : T_n(x) = \sum^{n}_{k=0} (-1)^k \frac{x^{2k+1}}{(2k+1)!}$$
+</p>
+
+<h2>Ako editovať kvíz?</h2>
+<p>V sekcii <a href="\moje_kvizy">Moje kvízy</a> si zvoľ želaný kvíz a
+na horizontálnom paneli na spodu obrazovky uvidíš tlačidlo Editácia kvízu.
+To ťa premiestni do formulára kde môžeš zmeniť základné informácie o kvíze - názov,
+predmet a typ kvízu, a môžeš rovnako odstrániť neželané otázky aj s odopveďami.</p>
+
+<h2>Ako odstránim konkrétnu otázku z kvízu?</h2>
+<p>V sekcii <a href="\moje_kvizy">Moje kvízy</a> si zvoľ želaný kvíz a
+na horizontálnom paneli na spodu obrazovky uvidíš tlačidlo Editácia kvízu.
+To ťa premiestni do formulára kde môžeš môžeš odstrániť neželané otázky aj s
+ odopveďami vybraného kvízu.</p>
+
+
+<h2>Ako spustiť a hrať kvíz?</h2>
+<p>V ľavom bočnom menu zvoľte možnosť "Moje kvízy", ktorá Vás dostane k ponuke
+ dostupných kvízov vo Vašej databáze. Kliknutím na jeden z kvízov sa vysvieti
+  príslušný radiobutton a kliknutím na tlačidlo "Spustiť kvíz", v horizontálnom
+  menu na spodu obrazovky, potvrdíte Vašu voľbu a spustí sa kvíz. Rovnako
+   stlačením tohto tlačila sa spúšťa časomiera na meranie trvania riešenia
+   kvízu, ktoré sa neskôr vyhodnotí po úspešnom ukončení kvízu. Každé úspešné
+   ukončenie kvízu a jeho výsledok je zaznamenaný v databáze a k nahliadnutiu
+   v sekcii "História pokusov".</p>
+
+
+<h2>Prečo sa odstránia pokusy spločne s odstránením kvízu?</h2>
+<p>Databáza tejto aplikácie je navrhnutá kaskádovým štýlom, čo znamená, že
+odstránením vyššej entity sa odstráni aj jej podriadená entita. Takýto model
+šetrí kapacitu databázy, keďže nie je nutné si pamätať celé znenie kvzíu
+spoločne s otázkami, ale stačí si pamatať identifikátor otázky a potom si to
+program vie napárovať.</p>
+
+<h2>O aplikácií</h2>
+<p>Aplikácia bola vytvorená ako hodnotený projekt na predmet Tvorba
+internetových aplikácií. Tento projekt je verejný a jeho kód k dispodzícií na
+<a href="https://github.com/SzabovaDominika/TIA_project" target="_blank">GitHube</a>
+autora. V prípade otázok, objavených chýb alebo iných dotazov ohľadne tejto
+aplikácie, neváhajte prispieť na GitHube.</p>

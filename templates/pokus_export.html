@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <title>MatQUIZ - Export pokus</title>
+    <link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet'>
+    <style>
+
+    </style>
+
+</head>
+<body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script type="text/javascript">
+    var oznacene = {}; //dict kde si znacime dvojcu { otazka : vybranaodpoved_id }
+var len, keys, kviz, tmp, kviz_info, podnadpis_str;
+var otazky_id = {}; //dict kde si ukladame prvky {id_otazky : [id_odpovedi] }
+
+    $(document).ready(function(){
+
+    kviz_info = $.ajax({
+        type:"GET",
+        url: "/kviz_req3",
+        async: false,
+        dataType: 'json',
+        data:{
+                 kviz_id: {{kviz_id}}
+        },
+        success: function( data ){
+            //$('#test1').text(JSON.stringify(data))
+        }
+    }).responseJSON
+    podnadpis_str = (kviz_info['nazov']+'   '+kviz_info['predmet']+'    '+kviz_info['typ']);
+    $('#podnadpis').text(kviz_info['nazov']+'   '+kviz_info['predmet']+'    '+kviz_info['typ']);
+
+    kviz =  $.ajax({
+        type:"GET",
+        url: "/kviz_req1",
+        async: false,
+        dataType: 'json',
+        data:{
+                 kviz_id: {{kviz_id}}
+        },
+        success: function( data ){
+            //$('#test1').text(JSON.stringify(data))
+        }
+    }).responseJSON
+
+    otazky_id = kviz['id']; //vyberieme si zaznam 'id' kde mame ulozeny dict id otazok a id odpovedi
+    delete kviz['id'];      // zaznam 'id' zmazeme aby sme mohli pokracovat s dict 'kviz'
+    len = Object.keys(kviz).length;
+    keys = Object.keys(kviz);
+    vypis_otazku(i);
+});
+
+
+</script>
+<!-- Sem daj hlavicku kvizu 'nazov - predmet - typ'-->
+<h1 id="kviz_info"></h1>
+<!-- Sem daj info o pokuse 'datum pokusu - vysledok' -->
+<h2 id="pokus_info"></h2>
+<!-- Sekcia na -->
+<div id="otazky_odpovede">
+
+</div>
+
+
+</body>
+</html>

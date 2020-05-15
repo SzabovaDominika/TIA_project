@@ -4,38 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <title>MatQUIZ - Kvíz</title>
+    <link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet'>
     <style>
-       .topheader {
-          overflow: hidden;
-          background-color: #E5E5E5;
-          position: fixed;
-          top: 10px;
-          left: 20%;
-          width: 80%;
-          font-family: calibri;
-        }
-        .topheader p1{
-          float: center;
-          display: block;
-          background: #C4C4C4;
-          color: black;
-          text-align: center;
-          padding: 14px 16px;
-          text-decoration: none;
-          font-size: 25px;
-          font-family: calibri;
-        }
-        .topheader p2{
-          float: center;
-          display: block;
-          background: #E5E5E5;
-          color: black;
-          text-align: center;
-          padding: 14px 16px;
-          text-decoration: none;
-          font-size: 20px;
-          font-family: calibri;
-        }
         .kviz_otazka{
           overflow: auto;
           position: fixed;
@@ -44,7 +14,7 @@
           width: 80%;
           height: 200pxs;
           padding : 10px, 10px;
-          font-family: calibri;
+          font-family: Raleway;
         }
 
 
@@ -128,34 +98,7 @@
           background: #f1f1f1;
           color: black;
         }
-.actionbar {
-          overflow: hidden;
-          background-color: #E5E5E5;
-          position: fixed;
-          bottom: 0px;
-          width: 100%;
-        }
 
-        .actionbar .actionbutton {
-          float: right;
-          display: block;
-          background: #FFBE58;
-          color: black;
-          text-align: center;
-          padding: 14px 16px;
-          text-decoration: none;
-          font-size: 25px;
-        }
-
-        .actionbar .actionbutton:hover {
-          background: #f1f1f1;
-          color: black;
-        }
-
-        .actionbar .actionbutton.active {
-          background-color: #4CAF50;
-          color: white;
-        }
     </style>
 
 </head>
@@ -165,14 +108,17 @@
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script type="text/javascript" src="http://latex.codecogs.com/latexit.js"></script>
+<script src="//i.upmath.me/latex.js"></script>
 <script type="text/javascript">
 
 var oznacene = {}; //dict kde si znacime dvojcu { otazka : vybranaodpoved_id }
-var len, keys, kviz, tmp, kviz_info, podnadpis_str;
-var otazky_id = {}; //dict kde si ukladame prvky {id_otazky : [id_odpovedi] }
+var poc_otazok, keys, kviz, tmp, kviz_info, podnadpis_str;
+
+
 var timestamp_start = new Date();
     var i = 0;
-    var j, len_od;
+    var j, poc_odpovedi;
 
 $(document).ready(function(){
 
@@ -204,43 +150,123 @@ $(document).ready(function(){
         }
     }).responseJSON
 
-    otazky_id = kviz['id']; //vyberieme si zaznam 'id' kde mame ulozeny dict id otazok a id odpovedi
     delete kviz['id'];      // zaznam 'id' zmazeme aby sme mohli pokracovat s dict 'kviz'
-    len = Object.keys(kviz).length;
-    keys = Object.keys(kviz);
+    poc_otazok = Object.keys(kviz).length;
     vypis_otazku(i);
 });
 
+function max_bodov(){
+    var max = 0;
+    var i;
+    for(i=0; i<poc_otazok; i++){
+        poc_odpovedi = Object.keys(kviz[i]).length - 1;
+        for(j=0; j<poc_odpovedi; j++){
+            if( kviz[i][j+1][3] ) max += kviz[i][j+1][2];
+        }
+    }
+    return max;
+}
+
+
+function prirad_pokus(cas){
+
+    var body = {'max':0, 'spravne':0, 'nespravne':0, 'nezodpovedane':0};
+<!--    Maximalny pocet bodov za spravne odpovede -->
+    body['max'] = max_bodov();
+<!--    Vypocitame ziskane body -->
+    var i;
+    for(i=0; i<poc_otazok; i++){
+        otazka_id = Object.keys(oznacene)[i];
+        if(oznacene[otazka_id] == null ) { body['nezodpovedane']++;}
+        if(oznacene[otazka_id][3] == true) { body['spravne'] += oznacene[otazka_id][2];}
+        if(oznacene[otazka_id][3] == false){body['nespravne'] += oznacene[otazka_id][2];}
+    }
+
+
+    pokus = $.ajax({
+        type:"GET",
+        url: "/kviz_req6",
+        async: false,
+        dataType: 'json',
+        data:{
+                 kviz_id: {{kviz_id}},
+                 zaciatok: cas[0],
+                 koniec: cas[1],
+                 spravne: body['spravne'],
+                 nespravne: body['nespravne'],
+                 nezodpovedane: body['nezodpovedane'],
+        },
+        success: function( data ){
+            console.log('pokus.ajax(): '+JSON.stringify(data))
+        }
+    }).responseJSON
+
+    return pokus['id'];
+}
+
+function prirad_Odpoved(otazka_id, odpoved_id, pokus_id){
+        $.ajax({
+        type:"GET",
+        url: "/kviz_req7",
+        async: false,
+        dataType: 'json',
+        data:{
+                 otazka_id: otazka_id,
+                 moja_odpoved_id: odpoved_id,
+                 pokus_id: pokus_id,
+        },
+        success: function( data ){
+            console.log('pokus_id  '+JSON.stringify(data))
+        }
+    });
+}
+
 function ukonci_kviz(){
+
+<!-- Validacia kvizu -->
 
     var timestamp_koniec = new Date();
     var cas = {0: timestamp_start, 1: timestamp_koniec};
-    sessionStorage.clear();
-    sessionStorage.setItem("kviz_id", {{kviz_id}});
-    sessionStorage.setItem("kviz_info", podnadpis_str);
-    sessionStorage.setItem("ot_odp_id", JSON.stringify(otazky_id));
-    sessionStorage.setItem("oznacene", JSON.stringify(oznacene));
-    sessionStorage.setItem("cas", JSON.stringify(cas));
-    sessionStorage.setItem("kviz_text", JSON.stringify(kviz));
 
-    window.location.replace("vysledky"); //FUNGUJE!
+<!-- Vytvorime zaznam v DB pre Pokus-->
+    var pokus_id = prirad_pokus(cas);
+
+
+<!-- Vytvorime zaznamy do DB Odpoved -->
+    var i;
+    for(i=0; i<poc_otazok;i++){
+        otazka_id = Object.keys(oznacene)[i];
+        odpoved_id = oznacene[otazka_id][0];
+        prirad_Odpoved(otazka_id, odpoved_id, pokus_id)
+    }
+
+    window.location.replace("/vysledky?kviz_id="+{{kviz_id}}+"&pokus_id="+pokus_id); //FUNGUJE!
+
 }
 
+
+
 function vypis_otazku(i){
-        //console.log(i);
-        if(i<len){
+        console.log("vypis otazku i: "+i);
+        console.log(kviz)
+        if(i<poc_otazok){
             var ele_ot = document.getElementById('otazka');
             var ele_odp = document.getElementById('formRB');
             ele_odp.innerHTML = '';
-            len_od = kviz[keys[i]].length;
-            var answers = kviz[keys[i]];
-            ele_ot.innerHTML = ('<b>'+(i+1)+'/'+len+'</b>     '); //pocitadlo otazok
-            ele_ot.innerHTML += keys[i];          //znenie otazky
+            poc_odpovedi = Object.keys(kviz[i]).length
 
-            for(j=0; j<len_od; j++){
-                ele_odp.innerHTML += ('<label class="container">'+ answers[j] +'<input type="radio" name="radio" id="'+j+'" class="radio"><span class="checkmark"></span></label>'); //znenie odpovede
+            ele_ot.innerHTML = ('<b>'+(i+1)+'/'+poc_otazok+'</b>     '); //pocitadlo otazok
+            ele_ot.innerHTML += kviz[i][0][1];          //znenie otazky
+            var j;
+            for(j=0; j<poc_odpovedi; j++){
+                var ot = j+1;
+                console.log("i/j+1: "+i+"  "+(j+1)+"  "+kviz[i][ot][1])
+
+
+                ele_odp.innerHTML += ('<label class="container">'+ kviz[i][ot][1] +
+                '<input type="radio" name="radio" id="'+(j+1)+
+                '" class="radio"><span class="checkmark"></span></label>'); //znenie odpovede
             }
-
         } else {
             ukonci_kviz();
         }
@@ -251,25 +277,17 @@ function uncheck(){
 function volba(i){
 
     if (i != -1){
-        var key_otazka = Object.keys(otazky_id)[i]; //toto nam vrati idcko i-tej otazky v kvize (key v danom dict)
-        var odpovede_k_otazke_i_id =  otazky_id[key_otazka]; //toto nam vrati array idciek odpovedi pre danu otazku
+        var id_otazka = kviz[i][0][0] //toto nam vrati idcko i-tej otazky v kvize (key v danom dict)
         var rb = document.querySelector('input[type=radio]:checked'); // FUNGUJE!
 
-        console.log("otazky_id full: "+JSON.stringify(otazky_id));
-        console.log("volba otazka poradie: "+i);
-        console.log("volba otazka db id: "+key_otazka);
-        console.log("volba odpovede db id "+odpovede_k_otazke_i_id);
-
         if(rb === null) {
-            console.log('otazka_id: '+key_otazka+'  nic');
-            oznacene[key_otazka] = null;
+            oznacene[id_otazka] = null;
         } else {
-
-            oznacene[key_otazka] =  odpovede_k_otazke_i_id[rb.id];
-            console.log('oznacene: '+oznacene[key_otazka]);
+            oznacene[id_otazka] = [kviz[i][rb][0],kviz[i][rb][1],kviz[i][rb][2], kviz[i][rb][3]]; //vlozime do pola oznacenych odpovedi: id otazky & znenie & body & spravnost
         }
     }
-    // HINT : rb.value = on/off; rb.id = <0,poc_odpovedi-1>
+    console.log("volba pre otazku cislo/id/ volba "+i+id_otazka+rb)
+    // HINT : rb.value = on/off; rb.id = <1,poc_odpovedi>
 
 }
 
@@ -277,10 +295,12 @@ function volba(i){
 </script>
 
 <div class="topheader">
-    <p1>KVIZ</p1>
+        <style scoped>
+        {% include 'styles/TopHeader_style.css' %}
+    </style>
+    <p1>KVÍZ</p1>
     <p2 id="podnadpis"></p2>
 </div>
-<p>uvitacie okno ku kvizu</p>  <!--TODO uvitacie okno ku kvizu, bude v inej class-->
 <div class="kviz_otazka">
 
 <!--    <p id="test1"></p>-->
@@ -290,10 +310,13 @@ function volba(i){
 <!--    <p id="odpovede_test"></p>-->
 </div>
 <div class="actionbar">
-    <a class="actionbutton" onclick="volba(i); ukonci_kviz()">Ukonci kviz</a>
-    <a class="actionbutton" onclick="volba(i); vypis_otazku(++i)">Dalsia otazka</a>
-    <a class="actionbutton" onclick="volba(i); vypis_otazku(--i)">Predosla otazka</a>
-    <a class="actionbutton" onclick="uncheck()">Odznacit</a>
+        <style scoped>
+        {% include 'styles/ActionBar_style.css' %}
+    </style>
+    <a class="actionbutton" onclick="volba(i); ukonci_kviz()">Ukonči kvíz</a>
+    <a class="actionbutton" onclick="volba(i); vypis_otazku(++i)">Ďalšia otázka</a>
+    <a class="actionbutton" onclick="volba(i); vypis_otazku(--i)">Predošlá otázka</a>
+    <a class="actionbutton" onclick="uncheck()">Odznaciť</a>
 </div>
 
 

@@ -1,18 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet'>
-    <style>
-        .topheader {
+/* TopHeader_style.css */
+.topheader {
           overflow: hidden;
           background-color: #E5E5E5;
           position: fixed;
           top: 10px;
           left: 20%;
           width: 80%;
-        }
-        .topheader p1{
+          font-family: Raleway;
+       }
+       .topheader p1{
           float: center;
           display: block;
           background: #C4C4C4;
@@ -21,8 +17,9 @@
           padding: 14px 16px;
           text-decoration: none;
           font-size: 25px;
-        }
-        .topheader p2{
+          font-family: Raleway;
+       }
+              .topheader p2{
           float: center;
           display: block;
           background: #E5E5E5;
@@ -31,15 +28,6 @@
           padding: 14px 16px;
           text-decoration: none;
           font-size: 20px;
-        }
-    </style>
-</head>
-<body>
+          font-family: Raleway;
 
-<div class="topheader">
-    <p1>Sem pride nadpis sekcie</p1>
-    <p2>sem pride podnadpis sekcie alebo nazov kvizu...</p2>
-</div>
-
-</body>
-</html>
+       }

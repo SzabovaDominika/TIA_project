@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <title>MatQUIZ - Vytvor kvíz</title>
+	<link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet'>
+	<style type="text/css">
+	<!--https://www.w3schools.com/css/tryit.asp?filename=trycss_forms-->
+<!-- FIXME -->
+
+        .NewQ_form .box {
+          width: 100%;
+          padding: 12px 20px;
+          margin: 8px 0;
+          display: inline-block;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          box-sizing: border-box;
+          font-family: Raleway;
+          font-size: 30pt;
+        }
+        .NewQ_form .additional_text{
+            font-size: 15pt;
+        }
+        .NewQ_form {
+          overflow: auto;
+          position: fixed;
+          top: 130px;
+          left: 20%;
+          width: 80%;
+          height: 200pxs;
+          padding : 10px, 10px;
+          font-family: Raleway;
+          font-size: 20pt;
+        }
+
+	</style>
+
+
+</head>
+<body>
+{% include 'MenuBar.html' %}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script rel="stylesheet" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script type="text/javascript">
+
+
+function validateForm() {
+
+<!--  var x = document.forms["Q_Title"]["fname"].value;-->
+<!--  if (title == "") {-->
+<!--    alert("Názov kvízu je povinné vyplniť");-->
+<!--    return false;-->
+<!--  }-->
+
+    var title = document.forms["NewQ"]["q_title"].value;
+    var lecture = document.forms["NewQ"]["q_lecture"].value;
+    var type = document.forms["NewQ"]["q_type"].value;
+
+    if (!title.match(/\S/))  title = "NA";
+    if (!lecture.match(/\S/))  lecture = "NA";
+    if (!type.match(/\S/))  type = "NA";
+
+    var newQ = $.ajax({
+        type:"GET",
+        url: "/kviz_req8",
+        async: false,
+        dataType: 'json',
+        data: {
+            'title' : title,
+            'lecture':lecture,
+            'type':type,
+            },
+    }).responseJSON
+
+    return newQ[1]
+}
+
+function submit_addQs(){
+    id = validateForm()
+    if (id != null) {
+    window.location.replace("/pridaj_otazku?kviz_id="+id);
+    }
+    else alert("Niekde nastala chyba. Skús obnoviť stránku alebo vyplniť polia znova.");
+}
+
+function submit_return(){
+    var idcko = validateForm()
+    if (idcko != null) { window.location.replace("/moje_kvizy"); }
+    else alert("Niekde nastala chyba. Vyplnil si všetky povinné polia?\n *Povinné polia: názov kvízu a predmet");
+}
+
+function clear_all(){
+<!--https://www.w3schools.com/howto/howto_html_clear_input.asp-->
+<!--    document.getElementById('myInput').value = ''-->
+    document.getElementById('q_title').value = '';
+    document.getElementById('q_lecture').value = '';
+    document.getElementById('q_type').value = '';
+}
+
+
+
+</script>
+
+
+<div class="topheader">
+    <style scoped>
+        {% include 'styles/TopHeader_style.css' %}
+    </style>
+    <p1>VYTVOR NOVÝ KVÍZ</p1>
+    <p2 id="podnadpis"></p2>
+</div>
+
+<!--https://www.w3schools.com/js/js_validation.asp-->
+<div class="NewQ_form">
+    <form name="NewQ" method="post">
+      Zadaj názov kvízu: <input class="box" type="text" id="q_title" name="q_title"
+                                placeholder="Názov kvízu" maxlength="50" size = 96
+                                style="height:30px;font-size: 15pt; font-family: Raleway;"><br><br>
+      Zadaj predmet: <input class="box" type="text" id="q_lecture" name="q_lecture"
+                            placeholder="Predmet" maxlength="100" size = 100
+                            style="height:30px;font-size: 15pt;font-family: Raleway;"><br><br>
+        Vyber typ kvízu:
+                <select id="q_type" name="q_type"
+                        style="height:30px;font-size: 15pt;font-family: Raleway;">
+                    <option value="neznáme" id="default" selected="selected">--- zvoľ možnosť ---</option>
+                    <option value="Rozcvička">Rozcvička</option>
+                    <option value="Cviková písomka malá">Cviková písomka</option>
+                    <option value="Cviková písomka veľká">Cviková písomka veľká</option>
+                    <option value="Laboratórny test">Laboratórny test</option>
+                    <option value="Zápočet">Zápočet</option>
+                    <option value="Semestrálna písomka">Semestrálna písomka</option>
+                    <option value="Skúška">Skúška</option>
+                    <option value="Skúška ústna">Skúška ústna</option>
+                    <option value="Skúška písomná">Skúška písomná</option>
+                    <option value="Štátnice">Štátnice</option>
+                    <option value="Vlastné precvičenie">Vlastné precvičenie</option>
+                </select>
+    </form><br>
+    <p class="additional_text">Ak niektoré údaje nevyplníš, budú nahradené univerzálnym slovom "NA" (z angl.
+        'not applicable'). Zvolený alebo univerzálny názov môžeš kedykoľvek zmeniť v sekcii
+        <b>Moje kvízy - Editácia kvízu</b>, kde tiež rovnako zmeníš aj zvyšné parametre kvízu.
+        Nekontrolujeme duplicitu názov kvízu, preto zaisti pre seba vhodné rozlíšenie
+        podobných/rovnakých názvov kvízu. V inom prípade je ich možné rozlíšiť
+        podľa dátumu vzniku, ktoré je uvedené v sekcii <b>Moje kvízy</b>. Kliknutím na
+        tlačidlo spodného panelu <b>Potvrdiť a choď späť na Moje kvízy</b> alebo
+        <b>Potvrdiť a pridaj otázku</b> Tebou zvolené parametre, rovnako aj nezvolené,
+        budú uložené do databázy a bude vytvorený nový kvíz. Ak si neželáš vytvoriť kvíz,
+        stačí stlačiť tlačidlo <b>Zruš</b>, ktoré vráti Ťa na ponuku tvojich kvízov, alebo
+        na niektorú sekciu z hlavného menu na ľavo.
+        Tlačidlo <b>Vyčistiť</b> slúži na vyčistenie celého formulára od textu, ktorí si zadal.
+    </p>
+</div>
+
+
+<div class="actionbar">
+        <style scoped>
+        {% include 'styles/ActionBar_style.css' %}
+    </style>
+    <a class="actionbutton" onclick="" href="\moje_kvizy">Zruš</a>
+    <a class="actionbutton" onclick="clear_all()">Vyčisti</a>
+    <a class="actionbutton" onclick="submit_addQs()">Potvrď a pridaj otázky</a>
+    <a class="actionbutton" onclick="submit_return()">Potvrď a choď späť na Moje kvízy</a>
+</div>
+
+
+</body>
+</html>
