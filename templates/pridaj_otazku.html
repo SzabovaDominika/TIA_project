@@ -89,33 +89,33 @@ function validateForm() {
     id = i+1;
     text_id = "q_answer"+id;
     body_id = "q_answer"+id+"points";
-    text = document.forms["NewQ"][text_id].value;
-    body = document.forms["NewQ"][body_id].value;
-    if ($("#"+id).is(":checked"))  spravna = 1;
+    text = document.forms["AnswersForm"][text_id].value;
+    body = document.forms["AnswersForm"][body_id].value;
+    if ($("#"+id).is(":checked"))  spravna = true;
+    else spravna = false;
 
+    console.log("uloz otazku: "+ot_id+" - "+text+" - "+body+" - "+spravna)
 
-  $.ajax({
-        type:"GET",
-        url: "/kviz_req10",
-        async: false,
-        dataType: 'json',
-        data:{
-            otazka_id : ot_id,
-            znenie : text,
-            body : body,
-            spravna : spravna,
-        },
-  })
+      $.ajax({
+            type:"GET",
+            url: "/kviz_req10",
+            async: false,
+            data:{
+                otazka_id : ot_id,
+                znenie : text,
+                body : body,
+                spravna : spravna,
+            },
+      })
     }
 }
 
 function submit_return(){
     validateForm();
-    window.location.replace("/moje_kvizy");
+
 }
 
 function submit_next(){
-
     validateForm();
     window.location.replace("/pridaj_otazku?kviz_id="+{{kviz_id}});
 }
@@ -123,11 +123,11 @@ function submit_next(){
 function render_answer_boxes(){
     var id;
     answ = document.getElementById('q_numansw').value;
-    var elem = document.getElementById('form');
-    elem.innerHTML += ('Zadaj znenie odpovede, body a zvoľ správnu odpoveď:<br><br>')
+    var elem = document.getElementById('form2');
+    elem.innerHTML = ('Zadaj znenie odpovede, body a zvoľ správnu odpoveď:<br><br>')
     for (i=0; i<answ; i++){
         id = i+1;
-        elem.innerHTML += (id+' <textarea class="box" type="text" id="q_answer'+id+'" name="q_answer'+id+'"placeholder="Odpoveď" size = 100 style="height:30px;font-size: 15pt;font-family: Raleway;"></textarea>');
+        elem.innerHTML += (id+' <textarea class="box" type="text" id="q_answer'+id+'" name="q_answer'+id+'"placeholder="Odpoveď" rows="2" cols="100" style="height:30px;font-size: 15pt;font-family: Raleway;"></textarea>');
         elem.innerHTML += ('    <input class="box" type="number" id="q_answer'+id+'points" name="q_answer'+id+'points" placeholder="Body" maxlength="4" size ="4" style="height:30px;font-size: 15pt;font-family: Raleway;">');
         elem.innerHTML += ('    <input class="formRB" type="radio" id="'+id+'" name="+id+"><br><br>');
     }
@@ -141,6 +141,10 @@ function clear_all(){
     document.getElementById('q_title').value = '';
     document.getElementById('q_numansw').value='';
     location.reload();
+}
+
+function back_toEdit(){
+    window.location.replace("/edituj_kviz?kviz_id="+{{kviz_id}});
 }
 
 </script>
@@ -166,6 +170,8 @@ function clear_all(){
         <button type="button" class="" onclick="render_answer_boxes()"
             style="height:30px;font-size: 15pt;font-family: Raleway;">Zvoľ</button>
         <br><br>
+    </form>
+    <form name="AnswersForm" method="post" id="form2">
 
     </form>
     <p  style="font-size: 10pt;font-family: Raleway;">
@@ -183,10 +189,10 @@ function clear_all(){
         <style scoped>
         {% include 'styles/ActionBar_style.css' %}
     </style>
-    <a class="actionbutton" onclick="" href="\moje_kvizy">Zruš</a>
+    <a class="actionbutton" onclick="back_toEdit()" >Zruš</a>
     <a class="actionbutton" onclick="clear_all()">Vyčisti celé</a>
     <a class="actionbutton" onclick="submit_next()">Potvrď a pridaj otázku</a>
-    <a class="actionbutton" onclick="submit_return()">Potvrď a choď späť na Moje kvízy</a>
+    <a class="actionbutton" onclick="submit_return()">Potvrď a choď späť na editáciu kvízu</a>
 </div>
 
 

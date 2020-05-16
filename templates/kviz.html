@@ -107,14 +107,15 @@
 {% include 'MenuBar.html' %}
 
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script rel="stylesheet" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
 <script type="text/javascript" src="http://latex.codecogs.com/latexit.js"></script>
 <script src="//i.upmath.me/latex.js"></script>
 <script type="text/javascript">
 
 var oznacene = {}; //dict kde si znacime dvojcu { otazka : vybranaodpoved_id }
-var poc_otazok, keys, kviz, tmp, kviz_info, podnadpis_str;
-
+var poc_otazok;
+var kviz = {}
 
 var timestamp_start = new Date();
     var i = 0;
@@ -122,7 +123,7 @@ var timestamp_start = new Date();
 
 $(document).ready(function(){
 
-    kviz_info = $.ajax({
+    var kviz_info = $.ajax({
         type:"GET",
         url: "/kviz_req3",
         async: false,
@@ -134,7 +135,7 @@ $(document).ready(function(){
             //$('#test1').text(JSON.stringify(data))
         }
     }).responseJSON
-    podnadpis_str = (kviz_info['nazov']+'   '+kviz_info['predmet']+'    '+kviz_info['typ']);
+    var podnadpis_str = (kviz_info['nazov']+'   '+kviz_info['predmet']+'    '+kviz_info['typ']);
     $('#podnadpis').text(kviz_info['nazov']+'   '+kviz_info['predmet']+'    '+kviz_info['typ']);
 
     kviz =  $.ajax({
@@ -175,11 +176,15 @@ function prirad_pokus(cas){
     body['max'] = max_bodov();
 <!--    Vypocitame ziskane body -->
     var i;
+    poc_otazok = Object.keys(oznacene).length;
     for(i=0; i<poc_otazok; i++){
+        console.log("oznacene: "+JSON.stringify(oznacene));
+        console.log("prirad pokus: otazka_id: "+Object.keys(oznacene)[i]);
         otazka_id = Object.keys(oznacene)[i];
-        if(oznacene[otazka_id] == null ) { body['nezodpovedane']++;}
-        if(oznacene[otazka_id][3] == true) { body['spravne'] += oznacene[otazka_id][2];}
-        if(oznacene[otazka_id][3] == false){body['nespravne'] += oznacene[otazka_id][2];}
+<!--        if(oznacene[otazka_id] == null ) { body['nezodpovedane']++;}-->
+        if(oznacene[otazka_id] == false ) { body['nezodpovedane']++;}
+        else if(oznacene[otazka_id][3] == true) { body['spravne'] += oznacene[otazka_id][2];}
+        else if(oznacene[otazka_id][3] == false){body['nespravne'] += oznacene[otazka_id][2];}
     }
 
 
@@ -231,16 +236,22 @@ function ukonci_kviz(){
 <!-- Vytvorime zaznam v DB pre Pokus-->
     var pokus_id = prirad_pokus(cas);
 
-
 <!-- Vytvorime zaznamy do DB Odpoved -->
     var i;
     for(i=0; i<poc_otazok;i++){
         otazka_id = Object.keys(oznacene)[i];
-        odpoved_id = oznacene[otazka_id][0];
+
+
+        if(typeof oznacene[otazka_id][0] === 'undefined'){
+            console.log("odpoved_id je undefined");
+            odpoved_id = -1; //ak je otazka undefined, tak jej priradime default hodnotu
+        } else { odpoved_id = oznacene[otazka_id][0]; }
+
+        console.log("otazka id, odpoved id - "+otazka_id+"  "+odpoved_id);
         prirad_Odpoved(otazka_id, odpoved_id, pokus_id)
     }
 
-    window.location.replace("/vysledky?kviz_id="+{{kviz_id}}+"&pokus_id="+pokus_id); //FUNGUJE!
+   window.location.replace("/vysledky?kviz_id="+{{kviz_id}}+"&pokus_id="+pokus_id); //FUNGUJE!
 
 }
 
@@ -253,17 +264,16 @@ function vypis_otazku(i){
             var ele_ot = document.getElementById('otazka');
             var ele_odp = document.getElementById('formRB');
             ele_odp.innerHTML = '';
-            poc_odpovedi = Object.keys(kviz[i]).length
+            poc_odpovedi = Object.keys(kviz[i]).length-1
 
             ele_ot.innerHTML = ('<b>'+(i+1)+'/'+poc_otazok+'</b>     '); //pocitadlo otazok
             ele_ot.innerHTML += kviz[i][0][1];          //znenie otazky
             var j;
             for(j=0; j<poc_odpovedi; j++){
                 var ot = j+1;
-                console.log("i/j+1: "+i+"  "+(j+1)+"  "+kviz[i][ot][1])
-
-
-                ele_odp.innerHTML += ('<label class="container">'+ kviz[i][ot][1] +
+                var odpoved = kviz[Object.keys(kviz)[i]][ot][1]
+                console.log("i/j+1: "+i+"  "+(j+1)+"  "+odpoved)
+                ele_odp.innerHTML += ('<label class="container">'+ odpoved +
                 '<input type="radio" name="radio" id="'+(j+1)+
                 '" class="radio"><span class="checkmark"></span></label>'); //znenie odpovede
             }
@@ -277,16 +287,19 @@ function uncheck(){
 function volba(i){
 
     if (i != -1){
-        var id_otazka = kviz[i][0][0] //toto nam vrati idcko i-tej otazky v kvize (key v danom dict)
-        var rb = document.querySelector('input[type=radio]:checked'); // FUNGUJE!
+        var otazka = kviz[Object.keys(kviz)[i]][0]; //toto nam vrati idcko i-tej otazky v kvize (key v danom dict)
+        var id_otazka = otazka[0];
 
-        if(rb === null) {
-            oznacene[id_otazka] = null;
+        if(!$("input[name='radio']:checked").val()) {
+            oznacene[id_otazka] = false;
+<!--            oznacene[id_otazka] = null;-->
         } else {
-            oznacene[id_otazka] = [kviz[i][rb][0],kviz[i][rb][1],kviz[i][rb][2], kviz[i][rb][3]]; //vlozime do pola oznacenych odpovedi: id otazky & znenie & body & spravnost
+            var rb = document.querySelector('input[type=radio]:checked'); // FUNGUJE!
+            var odpoved = kviz[Object.keys(kviz)[i]][rb.id];
+            oznacene[id_otazka] = [odpoved[0],odpoved[1],odpoved[2], odpoved[3]]; //vlozime do pola oznacenych odpovedi: id otazky & znenie & body & spravnost
         }
     }
-    console.log("volba pre otazku cislo/id/ volba "+i+id_otazka+rb)
+
     // HINT : rb.value = on/off; rb.id = <1,poc_odpovedi>
 
 }
@@ -313,7 +326,7 @@ function volba(i){
         <style scoped>
         {% include 'styles/ActionBar_style.css' %}
     </style>
-    <a class="actionbutton" onclick="volba(i); ukonci_kviz()">Ukonči kvíz</a>
+        <a class="actionbutton" onclick="volba(i); ukonci_kviz()">Ukonči kvíz</a>
     <a class="actionbutton" onclick="volba(i); vypis_otazku(++i)">Ďalšia otázka</a>
     <a class="actionbutton" onclick="volba(i); vypis_otazku(--i)">Predošlá otázka</a>
     <a class="actionbutton" onclick="uncheck()">Odznaciť</a>

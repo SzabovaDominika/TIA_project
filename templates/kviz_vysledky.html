@@ -49,10 +49,12 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>-->
 <script rel="stylesheet" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script type="text/javascript" src="http://latex.codecogs.com/latexit.js"></script>
+<script src="//i.upmath.me/latex.js"></script>
 <script type="text/javascript">
 
 var kv_id, kv_info, ot_odp_id, moje_odp, cas, text, pokus, pokus_id;
-
+var oznacene;
 $(document).ready(function(){
 
     kviz_info();
@@ -78,71 +80,73 @@ function kviz_info(){
 
 }
 
-function vypis_vysledky(){
-    var body = 0;
-    var statistika={'nezodpovedane':0, 'spravne':0, 'nespravne':0, 'spolu_otazok':0};
+function get_vysledky(){
 
-    otazky_id = Object.keys(moje_odp); //vrati array idciek otazok z daneho kvizy (keys of dict)
-    poc_otazky = otazky_id.length; //pocet otazok v kvize
+    var vysledky = $.ajax({
+        type:"GET",
+        url: "/kviz_req13",
+        async: false,
+        dataType: 'json',
+        data:{
+                 kviz_id: {{kviz_id}},
+                 pokus_id: {{pokus_id}},
+        }
+    }).responseJSON
+
+    console.log("vysledky: ", JSON.stringify(vysledky));
+
+    return vysledky;
+
+//    vysledky['pokus'] = [pokus.pokus_datum, pokus.pokus_zaciatok, pokus.pokus_koniec,
+//                         pokus.pokus_uhadol, pokus.pokus_neuhadol, pokus.pokus_neodpovedal,
+//                         pokus.pokus_body]
+//        vysledky[i] = [otazka_def, mojaOdp.odpoved_def, mojaOdp.odpoved_spravna,
+//                       mojaOdp.odpoved_body]
+
+}
+
+function vypis_vysledky(){
+
+
+    var oznacene = get_vysledky();
+    poc_otazok = Object.keys(oznacene).length - 1;
+
+    var pokus_info = oznacene['pokus'];
+<!--    delete oznacene['pokus'];-->
+
+    var body = pokus_info[6];
+    var statistika={'nezodpovedane':pokus_info[5], 'spravne':pokus_info[3],
+                    'nespravne':pokus_info[4], 'spolu_otazok':
+                     (pokus_info[5]+pokus_info[4]+pokus_info[3])};
 
     var ele = document.getElementById("vysl1");
-    for(i=0; i<poc_otazky; i++){
-
-        znenie_ot = '<b>'+(i+1)+'/'+poc_otazky+'</b>   '+Object.keys(text)[i]+'<br>'; //znenie otazky aj s pocitadlom
-        otazka_id = otazky_id[i]; //vrati idcko i-tej otazky
-        moja_odpoved_id = moje_odp[otazka_id]; //vrati idcko mojej odpovede na otazku (moje_odp[key of otazka])
-
-        if(moja_odpoved_id == null){
-            znenie_odp = '<p style="color:blue;">Otazka nezodpovedana</p><br>';
-            statistika['nezodpovedane']++;
-            statistika['spolu_otazok']++;
-            body += 0;
-        } else {
-            var vysledok = over(otazka_id, moja_odpoved_id, pokus_id);
-            if(vysledok['odpoved'] == true){
-                znenie_odp = '<p style="color:green;">'+vysledok['znenie']+'<br>SPRAVNA ODPOVED :)</p><br>'; //TODO zmen odpoved_text param
-                statistika['spravne']++;
-                statistika['spolu_otazok']++;
-            } else {
-                znenie_odp = '<p style="color:red;">'+vysledok['znenie']+'<br>NESPRAVNA ODPOVED :(</p><br>'; //TODO zmen odpoved_text param
-                statistika['nespravne']++;
-                statistika['spolu_otazok']++;
-            }
-            body += vysledok['body'];
+    for(i=0; i<poc_otazok; i++){
+        znenie_ot = '<b>'+(i+1)+'/'+poc_otazok+'</b>   '+ oznacene[i][0] +'<br>'; //znenie otazky aj s pocitadlom
+        console.log("odpoved: "+oznacene[i][2]+" --- "+oznacene[i][1])
+        if(oznacene[i][2] == true){
+                znenie_odp = '<p style="color:green;">'+oznacene[i][1]+'<br>SPRAVNA ODPOVED :)</p>';
+        } else if(oznacene[i][2] == -1){
+            znenie_odp = '<p style="color:blue;">Otazka nezodpovedana</p>';
+        }else if(oznacene[i][2] == false){
+                znenie_odp = '<p style="color:red;">'+oznacene[i][1]+'<br>NESPRAVNA ODPOVED :(</p>';
         }
+
         ele.innerHTML += (znenie_ot+znenie_odp);
-        body += vysledok['body'];
     }
     console.log(JSON.stringify(statistika));
     console.log(body);
 
-    dopln_pokus = $.ajax({
-        type:"GET",
-        url: "/kviz_req2",
-        async: false,
-        dataType: 'json',
-        data:{
-                 pokus_id: pokus_id,
-                 uhadol: statistika['spravne'],
-                 neuhadol: statistika['nespravne'],
-                 neodpovedal: statistika['nezodpovedane'],
-                 body: body,
-        },
-        success: function( data ){
-            console.log(JSON.stringify(data))
-        }
-    }).responseJSON
 
 //VYKRESLI VYSLEDKY
-    var spravne = statistika['spravne']*10;
-    var nespravne = spravne+(statistika['nespravne']*10);
-    var nezodpovedane = nespravne+(statistika['nezodpovedane']*10);
-    var ele1 = document.getElementById("actionbar1");
+//    var spravne = statistika['spravne']*10;
+//    var nespravne = spravne+(statistika['nespravne']*10);
+//    var nezodpovedane = nespravne+(statistika['nezodpovedane']*10);
+//    var ele1 = document.getElementById("actionbar1");
 
-    ele1.innerHTML += ('<p class="progress-bar" style="width:'+statistika['spravne']*10+'%; background-color: green;color:white">Spravne</p>');
-    ele1.innerHTML += ('<p class="progress-bar" style="width:'+statistika['nespravne']*10+'%; background-color: red;color:white">Nespravne</p>');
-    ele1.innerHTML += ('<p class="progress-bar" style="width:'+statistika['nezodpovedane']*10+'%; background-color: blue;color:white">Nezodpovedane</p>');
-    ele1.innerHTML += ('<p class="progress-bar" style="width: 20%;background-color: #FFBE58;color:white">Pocet ziskanych bodov: '+body+'</p>');
+//    ele1.innerHTML += ('<p class="progress-bar" style="width:'+statistika['spravne']*10+'%; background-color: green;color:white">Spravne</p>');
+//   ele1.innerHTML += ('<p class="progress-bar" style="width:'+statistika['nespravne']*10+'%; background-color: red;color:white">Nespravne</p>');
+//    ele1.innerHTML += ('<p class="progress-bar" style="width:'+statistika['nezodpovedane']*10+'%; background-color: blue;color:white">Nezodpovedane</p>');
+//    ele1.innerHTML += ('<p class="progress-bar" style="width: 20%;background-color: #FFBE58;color:white">Pocet ziskanych bodov: '+body+'</p>');
 }
 
 </script>
@@ -157,11 +161,11 @@ function vypis_vysledky(){
 </div>
 <div class="vyhodnotenie" id="vysl1"></div>
 
-<div class="actionbar" id="actionbar1">
-    <style scoped>
-        {% include 'styles/ActionBar_style.css' %}
-    </style>
-</div>
+<!--<div class="actionbar" id="actionbar1">-->
+<!--    <style scoped>-->
+<!--        {% include 'styles/ActionBar_style.css' %}-->
+<!--    </style>-->
+<!--</div>-->
 
 
 </body>

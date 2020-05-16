@@ -1,4 +1,4 @@
-<h2>Motivácia</h2>
+<h1>Motivácia</h1>
 
 <p>Účelom aplikácie je vytváranie vlastných kvízov, ktoré majú slúžiť ako
 samo-preskúšací prostriedok pre študentov pred zápočtom, skúškou alebo iným
@@ -16,29 +16,48 @@ typov kvízu. Na spodnom horizontálnom paneli si môžeš všimnúť rôzne akc
 ktoré možno spraviť s novovytvoreným kvízom. Bližšie informácie o spôsobe
 vytvárania nového kvízu nájdeš priamo vo formulári.</p>
 
-<h2>Ako pridať novú otázku do kvízu?</h2>
-
-<p>Lorem ipsum</p>
-
-<h2>Ako viem zapísať matematický výraz?</h2>
-<p>     Pre prehľadnú vizualizáciu matematických výrazov použi konvenciu LaTeXu. Stačí ak
-        matematickú funkciu ohraničíš dvojtým znakom <b>$$</b> na začiatku a na konci výrazu.
-        Všetok text, ktorý vpíšeš medzi tieto znaky, sa preloží a takto pekne vizualizuje: <br>
-        $ $\sin (x) : T_n(x) = \sum^{n}_{k=0} (-1)^k \frac{x^{2k+1}}{(2k+1)!}$ $<br>
-        $$\sin (x) : T_n(x) = \sum^{n}_{k=0} (-1)^k \frac{x^{2k+1}}{(2k+1)!}$$
-</p>
+<h2>Ako odstránim želaný kvíz?</h2>
+<p>V sekcii <a href="\moje_kvizy">Moje kvízy</a> na horizontálnom paneli
+na spodu obrazovky uvidíš tlačidlo <b>Odstrániť</b>.
+To odstráni celý kvíz spoločne s pokusmi, ktoré si mal v tomto kvíze. Pozor
+na to, že tieto úkony sú nevratné.</p>
 
 <h2>Ako editovať kvíz?</h2>
 <p>V sekcii <a href="\moje_kvizy">Moje kvízy</a> si zvoľ želaný kvíz a
-na horizontálnom paneli na spodu obrazovky uvidíš tlačidlo Editácia kvízu.
+na horizontálnom paneli na spodu obrazovky uvidíš tlačidlo <b>Editácia kvízu</b>.
 To ťa premiestni do formulára kde môžeš zmeniť základné informácie o kvíze - názov,
 predmet a typ kvízu, a môžeš rovnako odstrániť neželané otázky aj s odopveďami.</p>
+
+<h2>Ako pridať novú otázku do kvízu?</h2>
+<p>V sekcii <a href="\moje_kvizy">Moje kvízy</a> si zvoľ želaný kvíz a
+na horizontálnom paneli na spodu obrazovky uvidíš tlačidlo <b>Editácia kvízu</b>.
+To ťa premiestni do formulára kde uvidíš základné infomácie o kvíze a
+všetky otázky kvízu. Na spodnom horizontálnom paneli stlačíš
+tlačidlo <b>Potvrdiť a pridať otázku</b>. Premiestniš sa do iného formulára,
+kde uvidíš kolónky pre pridanie novej otázky a odpovedí. Po vyplnení všetkých
+políčok stlačíš jednu s akcií na spondom horizontálnom paneli.</p>
+
 
 <h2>Ako odstránim konkrétnu otázku z kvízu?</h2>
 <p>V sekcii <a href="\moje_kvizy">Moje kvízy</a> si zvoľ želaný kvíz a
 na horizontálnom paneli na spodu obrazovky uvidíš tlačidlo Editácia kvízu.
 To ťa premiestni do formulára kde môžeš môžeš odstrániť neželané otázky aj s
  odopveďami vybraného kvízu.</p>
+
+ <h2>Ako edituje konkrétnu otázku z kvízu?</h2>
+<p>Žiaľ, táto funkcionalita v tejto verzii aplikácie implementovaná nie je.
+Ak chceš pozmeniť znenie otázky, odpovede alebo body, je nutné aby si
+prv celú otázku odstránil a na novo ju do kvízu pridal. Budeme sa snažiť
+túto funkcionalitu do aplikácie čo najskôr pridať.</p>
+
+<h2>Ako viem zapísať výraz v $$\LaTeX$$  konvencii?</h2>
+<p>     Pre prehľadnú vizualizáciu matematických alebo chemických výrazov sme
+        zabudovali preklad reťazca do konvencie LaTeXu. Stačí ak výraz
+        ohraničíš dvojtým znakom <b>$$</b> na začiatku a na konci výrazu.
+        Všetok text, ktorý vpíšeš medzi tieto znaky, sa preloží a takto pekne vizualizuje: <br>
+        $ $\sin (x) : T_n(x) = \sum^{n}_{k=0} (-1)^k \frac{x^{2k+1}}{(2k+1)!}$ $<br>
+        $$\sin (x) : T_n(x) = \sum^{n}_{k=0} (-1)^k \frac{x^{2k+1}}{(2k+1)!}$$
+</p>
 
 
 <h2>Ako spustiť a hrať kvíz?</h2>
@@ -51,6 +70,11 @@ To ťa premiestni do formulára kde môžeš môžeš odstrániť neželané ot�
    ukončenie kvízu a jeho výsledok je zaznamenaný v databáze a k nahliadnutiu
    v sekcii "História pokusov".</p>
 
+<h2>Kde nájdem výsledky už prejdeného kvízu?</h2>
+<p>V sekcii <a href="\historia_pokusov">História pokusov</a> nájdeš zoznam
+všetkých pokusov,ktoré si kedy vykonal. Ak si želáš vidieť výsledky pokusu,
+stačí zvoliť jeden z pokusov a kliknúť na tlačidlo <b>Ukáž</b>, ktoré nájdeš
+na spodnom horizontálnom paneli.</p>
 
 <h2>Prečo sa odstránia pokusy spločne s odstránením kvízu?</h2>
 <p>Databáza tejto aplikácie je navrhnutá kaskádovým štýlom, čo znamená, že
@@ -59,7 +83,7 @@ odstránením vyššej entity sa odstráni aj jej podriadená entita. Takýto mo
 spoločne s otázkami, ale stačí si pamatať identifikátor otázky a potom si to
 program vie napárovať.</p>
 
-<h2>O aplikácií</h2>
+<h1>O aplikácií</h1>
 <p>Aplikácia bola vytvorená ako hodnotený projekt na predmet Tvorba
 internetových aplikácií. Tento projekt je verejný a jeho kód k dispodzícií na
 <a href="https://github.com/SzabovaDominika/TIA_project" target="_blank">GitHube</a>

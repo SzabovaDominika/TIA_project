@@ -7,12 +7,12 @@
         <style>
 
          .listkvizov{
-          overflow: auto;
+          overflow-y: scroll;
           position: fixed;
-          top: 130px;
+          top: 70px;
           left: 20%;
           width: 80%;
-          height: 200pxs;
+          height: 75%;
           padding : 10px, 10px;
           font-family: Raleway;
         }
@@ -138,6 +138,8 @@ function nacitaj(){
         }
     }).responseJSON
 
+// FORMA DICT: pokusy[pk.id] = [kviz.kviz_nazov, kviz.kviz_predmet, kviz.kviz_typ, pk.pokus_datum, kviz.id]
+
     vypis();
 }
 
@@ -171,22 +173,13 @@ function vymaz(){
 }
 
 
-<!-- TODO -->
-<!--function show(){-->
-<!--&lt;!&ndash;    zvol si pokus &ndash;&gt;-->
-<!--    var tmp = document.querySelector('input[type=radio]:checked'); // FUNGUJE!-->
-<!--    var bunch = $.ajax({-->
-<!--        type: "GET",-->
-<!--        url: "TODO",-->
-<!--        dataType: 'json',-->
-<!--        data:{-->
-<!--            # TODO sem daj data-->
-<!--        }-->
+function show(){
+<!--    zvol si pokus -->
+    var pokus = document.querySelector('input[type=radio]:checked'); // FUNGUJE!
+    var kviz_id = kvizy[pokus.id][4];
 
-<!--    });-->
-
-<!--    window.location.replace("vysledky"); //FUNGUJE!-->
-<!--}-->
+    window.location.replace("/vysledky?kviz_id="+kviz_id+"&pokus_id="+pokus.id); //FUNGUJE!
+}
 
 
 </script>
