@@ -1,0 +1,24 @@
+1. Je táto chemická reakcia korektná? $$ NaCl + H_2O \longrightarrow NaOH + HCl $$
+
+Áno, sol a voda sa rozdelia na ióny a spoja do hydroxidu sodného a kyseliny chlorovodíkovej
+
+Nie, získame ióny sodíka a chlóru vo vodnom roztoku 20
+
+
+2. Ktorý z matematických výrazov urcuje Taylorov rad pre $$\sin x$$ ?
+$$ sin (x) : T_n(x) = \sum^{n}_{k=0} (-1)^k \frac{x^{2k+1}}{(2k+1)!} $$
+$$ e^x (x) : T_n(x) = \sum^{n}_{k=0} \frac{x^{k}}{k!} $$
+$$ ln(1+x) (x) : T_n(x) = \sum^{n}_{k=0} (-1)^{k+1} \frac{x^k}{k} $$
+
+3. Kto nepratrí medzi Ninja korytnacky?
+Donatelo
+Raphael
+Theodoro 10
+Michelangelo
+Leonardo
+
+4. Je pravda, že oko pštrosa je väcšie než jeho mozog?
+Áno 20
+Nie
+
+5. 
