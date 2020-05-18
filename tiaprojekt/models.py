@@ -75,3 +75,6 @@ class Links(models.Model):
     user = models.IntegerField(default=-1)
     link = models.TextField(null=True, blank=True)
     show_as = models.TextField(null=True, blank=True)
+
+class tmpModel(models.Model):
+    elem = models.IntegerField(default=-1)
