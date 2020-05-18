@@ -30,6 +30,7 @@ urlpatterns = [
     path('nastenka', views.nastenka, name='nastenka'),
 
     # Requestes related to KVIZ model administration
+    path('kviz_req0', kviz_api.createDef),
     path('kviz_req1', kviz_api.get_otazky),
     path('kviz_req2', kviz_api.add_pokus),
     path('kviz_req3', kviz_api.get_kviz_info),

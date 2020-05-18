@@ -186,7 +186,16 @@ function hraj(){
 function novy_kviz(){
     window.location.replace("/vytvor_kviz");
 }
-
+function tmp(){
+        $.ajax({
+        type:"GET",
+        url: "/kviz_req0",
+        async: false,
+        data:{
+            },
+    });
+    window.location.replace("/moje_kvizy");
+}
 </script>
 
 
@@ -214,6 +223,7 @@ function novy_kviz(){
     <a class="actionbutton" onclick="vymaz()">Odstraniť kvíz</a>
     <a class="actionbutton" onclick="novy_kviz()">Vytvoriť nový kvíz</a>
     <a class="actionbutton" onclick="uncheck()">Odznačiť</a>
+    <a class="actionbutton" onclick="tmp()">TMP</a>
 </div>
 
 

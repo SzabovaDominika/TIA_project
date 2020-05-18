@@ -47,7 +47,7 @@ class Odpoved_def(models.Model):
 
 
 class Pokus(models.Model):
-    # user = models.IntegerField(default=-1)
+    user = models.IntegerField(default=-1)
     kviz_id = models.ForeignKey(Kviz_def, on_delete=models.CASCADE)
     pokus_datum = models.DateField(auto_now=True)
     pokus_zaciatok = models.TimeField(auto_now=True)

@@ -15,6 +15,39 @@ from .models import *
 def index(request):
     pass
 
+def createDef(request):
+    user = request.user.id
+    kv = Kviz_def()
+    kv.user = user
+    kv.kviz_typ = "Skúška"
+    kv.kviz_nazov="Testovaci1"
+    kv.kviz_predmet="Predmet1"
+    kv.save()
+
+    otazka = Otazka_def(kviz_id = kv, otazka_znenie = "Otazka1")
+    otazka.save()
+
+    odp1 = Odpoved_def()
+    odp1.otazka_id = otazka
+    odp1.odpoved_body = 5
+    odp1.odpoved_znenie = "spravna odpoved"
+    odp1.odpoved_spravna = True
+    odp1.save()
+    odp2 = Odpoved_def()
+    odp2.otazka_id = otazka
+    odp2.odpoved_body = 0
+    odp2.odpoved_znenie = "nespravna1 odpoved"
+    odp2.odpoved_spravna = False
+    odp2.save()
+
+    odp3 = Odpoved_def()
+    odp3.otazka_id = otazka
+    odp3.odpoved_body = 0
+    odp3.odpoved_znenie = "nespravna2 odpoved"
+    odp3.odpoved_spravna = False
+    odp3.save()
+
+
 
 def get_otazky(request):  # req1
     otazky_odpovede_ids = {}
