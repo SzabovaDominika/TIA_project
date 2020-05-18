@@ -3,6 +3,13 @@ from django.shortcuts import render
 from django.conf import settings
 import sqlite3
 from django.http import JsonResponse
+from django.contrib.auth.forms import UserCreationForm
+
+from .forms import CreateUserForm
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from .models import *
 
 from .models import *
 
@@ -11,7 +18,8 @@ def index(request):
 
 def get_all_pokus(request):      #req4
     # query to get all the 'pokus' elements from the DB
-    pokusy_all = Pokus.objects.all()
+    user = request.user.id
+    pokusy_all = Pokus.objects.filter(user = user)
     pokusy = {}
     for pk in pokusy_all:
         kviz = pk.kviz_id

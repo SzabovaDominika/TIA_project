@@ -33,7 +33,7 @@
   box-sizing: border-box;
   font-size: 14px;
 }
-.form button {
+.form .confirm_button {
   font-family: "Raleway", sans-serif;
   text-transform: uppercase;
   outline: 0;
@@ -47,7 +47,7 @@
   transition: all 0.3 ease;
   cursor: pointer;
 }
-.form button:hover,.form button:active,.form button:focus {
+.form .confirm_button:hover,.form .confirm_button:active,.form .confirm_button:focus {
   background: #FFBE58;
 }
 .form .message {
@@ -125,14 +125,21 @@ $('.message a').click(function(){
 
 <div class="login-page">
   <div class="form">
-    <form class="login-form">
+    <form method="post"  class="login-form" action="{% url 'login_method' %}">
+        {% csrf_token %}
         <img src="static/icon-version1.PNG" alt="LOGO" class="center">
         <p>PRIHLÁSENIE POUŽÍVATEĽA</p>
           <p style="margin-bottom: 0px;margin-top: 0px;">meno/prezývka</p>
-          <input type="text"/>
+          <input type="text" name="username"/>
           <p style="margin-bottom: 0px;margin-top: 0px;">heslo</p>
-          <input type="password" />
-      <button>Prihlásiť</button>
+          <input type="password" name="password" />
+      <input type="submit" class="confirm_button" value="Prihlásiť">
+
+        {% for message in messages %}
+
+					<p id="messages">{{message}}</p>
+
+				{% endfor %}
       <p class="message">Nie si ešte registrovaný? <a href="\register">Vytvor si konto</a></p>
     </form>
   </div>

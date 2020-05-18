@@ -1,89 +1,18 @@
-
-
-
-<html lang="sk">
-<head>
-<!--	<link rel="stylesheet" href="styles.css">-->
-	<link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet'>
-	    <meta charset="UTF-8">
-	<style type="text/css">
-		.main{
-			margin-left:160px;
-            margin-bottom: 30px;
-		}
-		img {
-			width: 200px;
-			float: center;
-		}
-		.menubar {
-			position: fixed;
-			width: 17%;
-			height: 100%;
-			left: 0px;
-<!--			top: calc(50% - 1000px/2);-->
-			background: #FFFFFF;
-			z-index:1;
-			overflow-x: hidden;
-			font-family: Raleway;
-<!--			padding-top:10px;-->
-		}
-
-		.menubar a {
-		  float: center;
-          display: block;
-          background: #E5E5E5;
-          color: black;
-          text-align: center;
-          padding: 14px 10px;
-          text-decoration: none;
-          font-size: 30px;
-          border: none;
-          widht: 100%;
-          line-height: 39px;
-			font-family: Raleway;
-
-         }
-		.menubar a:hover{
-  			background-color: #C9E465;
-  			color: grey;
-		}
-		.menubar a.active {
-  			color: grey;
-		}
-		.menubar #hlavicka{
-			font-family: Raleway;
-			font-style: normal;
-			font-weight: normal;
-			font-size: 40px;
-			line-height: 10px;
-			text-align: center;
-			background-color: clear;
-			color: #C4C4C4;
-			width: 100%;
-		}
-
-
-	</style>
-</head>
-
-<body>
-
 	<div class="menubar">
-		<img src="static/icon-version1.PNG" alt="LOGO" class="center">
-		<p id="hlavicka">MENU</p>
+		<style scoped>
+        {% include 'styles/MenuBar_style.css' %}
+    </style>
 
-		<a href="/nastenka">Nástenka</a>
+			<img src="static/icon-version1.PNG" alt="LOGO" class="center">
 
+		{% csrf_token %}
+		<p class="hlavicka">{{request.user.username}}</p>
+		<p class="hlavicka">MENU</p>
 
-		<a href="/moje_kvizy">Moje kvízy</a>
-
-
-		<a href="/historia_pokusov">História pokusov</a>
-
-
-		<a href="/oappke">O Appke</a>
+		<a  href="\nastenka">Nástenka</a>
+		<a href="\moje_kvizy">Moje kvízy</a>
+		<a href="\historia_pokusov">História pokusov</a>
+		<a href="\oappke">O Appke</a>
+		<a href="\logout_req" style="background:#C9E465">Odhlásiť</a>
 
 	</div>
-
-</body>
-</html>

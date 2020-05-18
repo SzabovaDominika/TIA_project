@@ -3,7 +3,12 @@ from django.shortcuts import render
 from django.conf import settings
 import sqlite3
 from django.http import JsonResponse
+from django.contrib.auth.forms import UserCreationForm
 
+from .forms import CreateUserForm
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from .models import *
 
 
@@ -33,6 +38,7 @@ def get_otazky(request):  # req1
 def add_pokus(request):
     # req2
     pokus_id = request.GET['pokus_id']
+    # uname = request.GET['user']
     pk = Pokus.objects.get(id=pokus_id)
     pk.pokus_neuhadol = request.GET['neuhadol']
     pk.pokus_uhadol = request.GET['udaol']
@@ -55,7 +61,12 @@ def get_kviz_info(request):  # req3
 
 def get_all_kviz(request):  # req4
     # query to get all the 'kviz' elements from the DB
-    mnozina = Kviz_def.objects.all()
+
+    user = request.user.id
+    print("request.user.id", request.user.id)
+    mnozina = Kviz_def.objects.filter(user = user)
+    print(mnozina)
+    # mnozina = Kviz_def.objects.all()
     kvizy = {}
     for obj in mnozina:
         kvizy[obj.id] = [obj.kviz_nazov, obj.kviz_predmet, obj.kviz_typ, obj.kviz_vytvoreny]
@@ -69,8 +80,9 @@ def delete_kviz(request):  # req5
 
 def assign_pokus(request):  # req6
     id_kv = request.GET['kviz_id']
-
+    user = request.user.id
     pokus = Pokus()
+    pokus.user = user
     pokus.kviz_id = Kviz_def.objects.get(id=id_kv)
     pokus.pokus_zaciatok = request.GET['zaciatok']
     pokus.pokus_koniec = request.GET['koniec']
@@ -78,7 +90,11 @@ def assign_pokus(request):  # req6
     pokus.pokus_neuhadol = request.GET['nespravne']
     pokus.pokus_uhadol = request.GET['spravne']
     pokus.pokus_neodpovedal = request.GET['nezodpovedane']
+    pokus.pokus_body_zisk = request.GET['body_zisk']
+    pokus.pokus_body_max = request.GET['body_max']
     pokus.save()
+
+    print("- Pokus id", pokus.id," sucessfully assigned")
 
     return JsonResponse({'id': pokus.pk})
 
@@ -97,8 +113,10 @@ def createnew_kviz(request):
     title = request.GET['title']
     lecture = request.GET['lecture']
     typ = request.GET['type']
-
+    user = request.user.id
+    print("request.user.id", request.user.id)
     newQ = Kviz_def()
+    newQ.user = user
     newQ.kviz_nazov = title
     newQ.kviz_predmet = lecture
     newQ.kviz_typ = typ
@@ -136,17 +154,12 @@ def add_new_answer_definition(request):
     new_odp.odpoved_body = request.GET['body']
 
     spravna = request.GET['spravna']
-    print("SPRAVNOST OTAZKY: ", spravna)
     if spravna == 'true':
-        print("odpoved je spravna")
         new_odp.odpoved_spravna = True
     else:
-        print("odpoved je nespravna")
         new_odp.odpoved_spravna = False
-
     new_odp.save()
-    print("new idcko odpoved", new_odp.id)
-    print("new idcko odpoved", new_odp.odpoved_spravna)
+
 
 
 def edit_kviz(request):
@@ -181,9 +194,9 @@ def get_pokus_vysledok(request):    #req13
     print(odpovede)
     vysledky = {'pokus': [pokus.pokus_datum, pokus.pokus_zaciatok, pokus.pokus_koniec,
                           pokus.pokus_uhadol, pokus.pokus_neuhadol, pokus.pokus_neodpovedal,
-                          pokus.pokus_body]}
+                          pokus.pokus_body_zisk, pokus.pokus_body_max]}
     for i in range(0, len(odpovede)):
-        otazka_def = Otazka_def.objects.get(id = odpovede[i].otazka_id).otazka_znenie  # FIXME zle vytvorena 'odpoved' je tam 'def' namiesto 'id'
+        otazka_def = Otazka_def.objects.get(id = odpovede[i].otazka_id).otazka_znenie
 
         if odpovede[i].odpoved_moja == -1 :
             vysledky[i] = [otazka_def, "", -1, 0]

@@ -15,13 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from . import views, kviz_api, history_api
+from . import views, kviz_api, history_api, nastenka_api
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.login, name='home_login'),
-    path('login', views.login, name='login'),
-    path('register', views.register, name='register'),
+    path('', views.login_method, name='home_login'),
+    path('login', views.login_method, name='login_method'),
+    path('register', views.register_method, name='register'),
     path('kviz', views.kviz, name='kviz'),
     path('moje_kvizy', views.moje_kvizy, name='moje_kvizy'),
     path('vysledky', views.vysledky, name='vysledky'),
@@ -51,5 +51,15 @@ urlpatterns = [
     path('edituj_kviz', views.edituj_kviz),
 
     # Requestes related to POKUS model administration
-    path('history_req1', history_api.delete_pokus)
+    path('history_req1', history_api.delete_pokus),
+
+    # Requests related to NASTENKA window administration
+    path('nastenka_req1', nastenka_api.counter_kviz),
+    path('nastenka_req2', nastenka_api.counter_pokus),
+    path('nastenka_req3', nastenka_api.get_uspesnot),
+    path('nastenka_req4', nastenka_api.new_Link),
+    path('nastenka_req5', nastenka_api.all_Link),
+
+    #LOGOUT
+    path('logout_req', views.signout, name='logout')
 ]

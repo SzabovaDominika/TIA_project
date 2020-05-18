@@ -50,6 +50,13 @@ Ak chceš pozmeniť znenie otázky, odpovede alebo body, je nutné aby si
 prv celú otázku odstránil a na novo ju do kvízu pridal. Budeme sa snažiť
 túto funkcionalitu do aplikácie čo najskôr pridať.</p>
 
+ <h2>Ako bodovo hodnotí nezodpovedaná otázka?</h2>
+<p>Bodové hodnotenie nezopovedanej otázky je 0. V tejto verzií aplikácie
+neponúkame možnosť nastavenia bodov aj pre nezodpovedanú otázku. Avšak možnosť
+ako si to odsimulovať je taká, že pridáte k otázke odpoveď "Neodpovedať" a
+nastavíte jej želaný počet bodov. Do výsledného bodovania kvízu sa rátajú aj
+body zle odpovedaných otázok, ktoré tak priamo ovplyvňujú výsledok kvízu.</p>
+
 <h2>Ako viem zapísať výraz v $$\LaTeX$$  konvencii?</h2>
 <p>     Pre prehľadnú vizualizáciu matematických alebo chemických výrazov sme
         zabudovali preklad reťazca do konvencie LaTeXu. Stačí ak výraz

@@ -109,8 +109,10 @@
 <body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script rel="stylesheet" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-<script type="text/javascript" src="http://latex.codecogs.com/latexit.js"></script>
+<!--<script type="text/javascript" src="http://latex.codecogs.com/latexit.js"></script>-->
 <script src="//i.upmath.me/latex.js"></script>
+<!--<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML"></script>-->
+
 <script type="text/javascript">
 
 var kviz_info;
@@ -184,7 +186,6 @@ function vypis_kviz(){
             var ele_ot = document.getElementById('Kviz_info');
 
             len_odpovede = Object.keys(kviz[i]).length //pocet odpovedi k otazke v poradi 'i'
-
 
             //znenie otazky
             ele_ot.innerHTML += ('<label class="container"><b>'+(i+1)+'/'+len_otazky+' </b>'+ kviz[i][0][1] +'<input type="radio" name="radio" id="'+kviz[i][0][0]+'" class="radio"><span class="checkmark"></span></label>');

@@ -122,5 +122,5 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "tiaprojekt", 'static')
-
+# LOGIN_REDIRECT_URL ='/nastenka'
 django_heroku.settings(locals())

@@ -9,34 +9,24 @@
        .vyhodnotenie{
           overflow-y: scroll;
           position: fixed;
-          top: 130px;
+          top: 150px;
           left: 20%;
-          width: 80%;
-          height: 200pxs;
+          width: 42%;
+          height: 75%;
           padding : 10px, 10px;
           font-family: Raleway;
        }
-
-       .actionbar {
-          overflow: hidden;
-          background-color: #E5E5E5;
-          position: fixed;
-          bottom: 0px;
-          width: 100%;
+       .statistika{
+          overflow-y: scroll;
+          position:fixed;
+          top: 120px;
+          right: 0%;
+          width: 550px;
+          height: 83%;
+          padding: 10px, 10px;
           font-family: Raleway;
        }
 
-       .actionbar .progress-bar {
-          float: left;
-          display: block;
-          text-align: center;
-          //padding: 14px 16px;
-          text-decoration: none;
-          font-size: 20px;
-          font-family: Raleway;
-          height: 40px;
-          font-family: Raleway;
-       }
 
 
     </style>
@@ -44,21 +34,23 @@
 </head>
 <body>
 
-{% include 'MenuBar.html' %}
-<!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">-->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>-->
-<script rel="stylesheet" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-<script type="text/javascript" src="http://latex.codecogs.com/latexit.js"></script>
-<script src="//i.upmath.me/latex.js"></script>
+
+<script src="https://www.gstatic.com/charts/loader.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
 <script type="text/javascript">
 
 var kv_id, kv_info, ot_odp_id, moje_odp, cas, text, pokus, pokus_id;
+var statistika = {}
 var oznacene;
 $(document).ready(function(){
 
     kviz_info();
     vypis_vysledky();
+    drawChart();
 
 });
 
@@ -107,17 +99,18 @@ function get_vysledky(){
 
 function vypis_vysledky(){
 
-
     var oznacene = get_vysledky();
     poc_otazok = Object.keys(oznacene).length - 1;
 
     var pokus_info = oznacene['pokus'];
-<!--    delete oznacene['pokus'];-->
+//    delete oznacene['pokus'];
 
-    var body = pokus_info[6];
-    var statistika={'nezodpovedane':pokus_info[5], 'spravne':pokus_info[3],
-                    'nespravne':pokus_info[4], 'spolu_otazok':
-                     (pokus_info[5]+pokus_info[4]+pokus_info[3])};
+     statistika={'nezodpovedane':pokus_info[5],
+                    'spravne':pokus_info[3],
+                    'nespravne':pokus_info[4],
+                     'spolu_otazok': (pokus_info[5]+pokus_info[4]+pokus_info[3]),
+                     'body_zisk': pokus_info[6],
+                     'body_max': pokus_info[7]};
 
     var ele = document.getElementById("vysl1");
     for(i=0; i<poc_otazok; i++){
@@ -133,25 +126,56 @@ function vypis_vysledky(){
 
         ele.innerHTML += (znenie_ot+znenie_odp);
     }
-    console.log(JSON.stringify(statistika));
-    console.log(body);
+    console.log("statistika "+JSON.stringify(statistika));
 
-
+}
 //VYKRESLI VYSLEDKY
-//    var spravne = statistika['spravne']*10;
-//    var nespravne = spravne+(statistika['nespravne']*10);
-//    var nezodpovedane = nespravne+(statistika['nezodpovedane']*10);
-//    var ele1 = document.getElementById("actionbar1");
+        google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
 
-//    ele1.innerHTML += ('<p class="progress-bar" style="width:'+statistika['spravne']*10+'%; background-color: green;color:white">Spravne</p>');
-//   ele1.innerHTML += ('<p class="progress-bar" style="width:'+statistika['nespravne']*10+'%; background-color: red;color:white">Nespravne</p>');
-//    ele1.innerHTML += ('<p class="progress-bar" style="width:'+statistika['nezodpovedane']*10+'%; background-color: blue;color:white">Nezodpovedane</p>');
-//    ele1.innerHTML += ('<p class="progress-bar" style="width: 20%;background-color: #FFBE58;color:white">Pocet ziskanych bodov: '+body+'</p>');
+function drawChart() {
+        // ---- vykreslenie statistiky otazok -----
+        var data_ot = google.visualization.arrayToDataTable([
+          ['Odpovede k otázkam', 'Počet', { role: "style" }],
+          ['Správne',     statistika['spravne'], "#C9E465"],
+          ['Nesprávne',      statistika['nespravne'], "#FFBE58"],
+          ['Neozodpovedané',  statistika['nezodpovedane'], "#E5E5E5"],
+        ]);
+
+        var options_ot = {
+          title: 'Výsledky kvízu',
+          legend: { position: "none" },
+        };
+
+        var chart_ot = new google.visualization.ColumnChart(document.getElementById('otazky'));
+
+        chart_ot.draw(data_ot, options_ot);
+
+        // ---- vykreslenie bodov -----
+        var data_b = google.visualization.arrayToDataTable([
+          ['Bodovanie', 'Počet'],
+          ['Získané body',     statistika['body_zisk']],
+          ['Nezískané body',      statistika['body_max']-statistika['body_zisk']],
+        ]);
+
+        var options_b = {
+          title: 'Získané body',
+          colors: ['#C9E465','#E5E5E5'],
+        };
+
+        var chart_b = new google.visualization.PieChart(document.getElementById('body'));
+
+        chart_b.draw(data_b, options_b);
+
+
+
+
 }
 
 </script>
 
 
+{% include 'MenuBar.html' %}
 <div class="topheader">
         <style scoped>
         {% include 'styles/TopHeader_style.css' %}
@@ -161,6 +185,10 @@ function vypis_vysledky(){
 </div>
 <div class="vyhodnotenie" id="vysl1"></div>
 
+<div class="statistika">
+    <div id="otazky" style="width: 500px; height: 300px;"></div>
+    <div id="body" style="width: 500px; height: 300px;"></div>
+</div>
 <!--<div class="actionbar" id="actionbar1">-->
 <!--    <style scoped>-->
 <!--        {% include 'styles/ActionBar_style.css' %}-->

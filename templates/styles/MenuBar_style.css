@@ -1,0 +1,61 @@
+.main{
+			margin-left:160px;
+            margin-bottom: 30px;
+		}
+		img {
+			width: 200px;
+			float: center;
+		}
+		.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 70%;
+}
+		.menubar {
+			position: fixed;
+			width: 17%;
+			height: 100%;
+			left: 0px;
+<!--			top: calc(50% - 1000px/2);-->
+			background: #FFFFFF;
+			z-index:1;
+			overflow-x: hidden;
+			font-family: Raleway;
+<!--			padding-top:10px;-->
+		}
+
+		.menubar a {
+		  float: center;
+          display: block;
+          background: #E5E5E5;
+          color: black;
+          text-align: center;
+          padding: 14px 10px;
+          text-decoration: none;
+          font-size: 30px;
+          border: none;
+          widht: 100%;
+          line-height: 39px;
+			font-family: Raleway;
+
+         }
+		.menubar a:hover{
+  			background-color: #C9E465;
+  			color: grey;
+		}
+		.menubar a.active {
+  			color: grey;
+		}
+		.menubar .hlavicka{
+			font-family: Raleway;
+			font-style: normal;
+			font-weight: normal;
+			font-size: 30px;
+			line-height: 10px;
+			text-align: center;
+			background-color: clear;
+			color: #C4C4C4;
+			width: 100%;
+		}
+

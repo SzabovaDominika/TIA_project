@@ -140,7 +140,8 @@ function nacitaj(){
         url: "/kviz_req4",
         async: false,
         dataType: 'json',
-        data:{},
+        data:{
+        },
         success: function( data ){
             //$('#test1').text(JSON.stringify(data))
         }
@@ -182,6 +183,9 @@ function hraj(){
 
     window.location.replace("/kviz?kviz_id="+tmp.id);
 }
+function novy_kviz(){
+    window.location.replace("/vytvor_kviz");
+}
 
 </script>
 
@@ -208,7 +212,7 @@ function hraj(){
     <a class="actionbutton" onclick="hraj()">Spustiť kvíz</a>
     <a class="actionbutton" onclick="edit()">Editovať</a>
     <a class="actionbutton" onclick="vymaz()">Odstraniť kvíz</a>
-    <a class="actionbutton" onclick="" href="\vytvor_kviz">Vytvoriť nový kvíz</a>
+    <a class="actionbutton" onclick="novy_kviz()">Vytvoriť nový kvíz</a>
     <a class="actionbutton" onclick="uncheck()">Odznačiť</a>
 </div>
 

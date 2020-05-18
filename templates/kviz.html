@@ -109,9 +109,10 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script rel="stylesheet" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-<script type="text/javascript" src="http://latex.codecogs.com/latexit.js"></script>
+<!--<script type="text/javascript" src="http://latex.codecogs.com/latexit.js"></script>-->
 <script src="//i.upmath.me/latex.js"></script>
-<script type="text/javascript">
+<!--<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML"></script>-->
+<script type="text/javascript" >
 
 var oznacene = {}; //dict kde si znacime dvojcu { otazka : vybranaodpoved_id }
 var poc_otazok;
@@ -171,20 +172,22 @@ function max_bodov(){
 
 function prirad_pokus(cas){
 
-    var body = {'max':0, 'spravne':0, 'nespravne':0, 'nezodpovedane':0};
-<!--    Maximalny pocet bodov za spravne odpovede -->
+    var body = {'max':0, 'spravne':0, 'nespravne':0, 'nezodpovedane':0, 'ziskane': 0};
+//    Maximalny pocet bodov za spravne odpovede
     body['max'] = max_bodov();
-<!--    Vypocitame ziskane body -->
+//    Vypocitame ziskane body
     var i;
     poc_otazok = Object.keys(oznacene).length;
     for(i=0; i<poc_otazok; i++){
         console.log("oznacene: "+JSON.stringify(oznacene));
         console.log("prirad pokus: otazka_id: "+Object.keys(oznacene)[i]);
         otazka_id = Object.keys(oznacene)[i];
-<!--        if(oznacene[otazka_id] == null ) { body['nezodpovedane']++;}-->
+//        if(oznacene[otazka_id] == null ) { body['nezodpovedane']++;}
         if(oznacene[otazka_id] == false ) { body['nezodpovedane']++;}
-        else if(oznacene[otazka_id][3] == true) { body['spravne'] += oznacene[otazka_id][2];}
-        else if(oznacene[otazka_id][3] == false){body['nespravne'] += oznacene[otazka_id][2];}
+        else if(oznacene[otazka_id][3] == true) { body['spravne']++; body['ziskane'] += oznacene[otazka_id][2];}
+        else if(oznacene[otazka_id][3] == false){body['nespravne']++; body['ziskane'] += oznacene[otazka_id][2];}
+
+
     }
 
 
@@ -200,6 +203,8 @@ function prirad_pokus(cas){
                  spravne: body['spravne'],
                  nespravne: body['nespravne'],
                  nezodpovedane: body['nezodpovedane'],
+                 body_zisk: body['ziskane'],
+                 body_max: body['max']
         },
         success: function( data ){
             console.log('pokus.ajax(): '+JSON.stringify(data))
@@ -228,25 +233,23 @@ function prirad_Odpoved(otazka_id, odpoved_id, pokus_id){
 
 function ukonci_kviz(){
 
-<!-- Validacia kvizu -->
+// Validacia kvizu
 
     var timestamp_koniec = new Date();
     var cas = {0: timestamp_start, 1: timestamp_koniec};
 
-<!-- Vytvorime zaznam v DB pre Pokus-->
+// Vytvorime zaznam v DB pre Pokus
     var pokus_id = prirad_pokus(cas);
 
-<!-- Vytvorime zaznamy do DB Odpoved -->
+// Vytvorime zaznamy do DB Odpoved
     var i;
     for(i=0; i<poc_otazok;i++){
         otazka_id = Object.keys(oznacene)[i];
-
 
         if(typeof oznacene[otazka_id][0] === 'undefined'){
             console.log("odpoved_id je undefined");
             odpoved_id = -1; //ak je otazka undefined, tak jej priradime default hodnotu
         } else { odpoved_id = oznacene[otazka_id][0]; }
-
         console.log("otazka id, odpoved id - "+otazka_id+"  "+odpoved_id);
         prirad_Odpoved(otazka_id, odpoved_id, pokus_id)
     }
@@ -292,7 +295,7 @@ function volba(i){
 
         if(!$("input[name='radio']:checked").val()) {
             oznacene[id_otazka] = false;
-<!--            oznacene[id_otazka] = null;-->
+//            oznacene[id_otazka] = null;
         } else {
             var rb = document.querySelector('input[type=radio]:checked'); // FUNGUJE!
             var odpoved = kviz[Object.keys(kviz)[i]][rb.id];
@@ -320,7 +323,7 @@ function volba(i){
 <!--   Zdroj  https://www.w3schools.com/howto/howto_css_custom_checkbox.asp -->
     <p id="otazka"></p>
     <form id="formRB" name ="otazka-opovede" action=""></form>
-<!--    <p id="odpovede_test"></p>-->
+
 </div>
 <div class="actionbar">
         <style scoped>
